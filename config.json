@@ -1,0 +1,58 @@
+{
+  "workflowApiVersion": "1.1",
+  "metaData": {
+    "category": "message"
+  },
+  "type": "REST",
+  "lang": {
+    "en-US": {
+      "name": "SMS Logger",
+      "description": "Logs SMS data into SendLogMasterSMS"
+    }
+  },
+  "arguments": {
+    "execute": {
+      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/lkyzhaskv15",
+      "verb": "POST",
+      "body": "",
+      "header": "",
+      "format": "json",
+      "inArguments": [
+        {
+          "subscriberKey": "{{Contact.Key}}",
+          "mobileNumber": "{{Event.MobileNumber}}",
+          "leadId": "{{Event.LeadId}}",
+          "applicationId": "{{Event.ApplicationId}}",
+          "source": "Journey"
+        }
+      ],
+      "outArguments": []
+    }
+  },
+  "configurationArguments": {
+    "publish": {
+      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/lkyzhaskv15"
+    },
+    "validate": {
+      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/lkyzhaskv15"
+    },
+    "stop": {
+      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/lkyzhaskv15"
+    }
+  },
+  "userInterfaces": {
+    "configModal": {
+      "height": 500,
+      "width": 800,
+      "fullscreen": false
+    }
+  },
+  "schema": {
+    "arguments": {
+      "execute": {
+        "inArguments": [],
+        "outArguments": []
+      }
+    }
+  }
+}
