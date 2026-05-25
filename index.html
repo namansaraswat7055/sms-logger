@@ -12,48 +12,73 @@
             color: #333;
             background: #fff;
         }
-        h3 { color: #007bff; }
-        p { font-size: 14px; line-height: 1.5; }
+        h3 { color: #2e7d32; margin-bottom: 10px; }
+        p { font-size: 14px; line-height: 1.6; }
+        .badge {
+            display: inline-block;
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #2e7d32;
+        }
     </style>
 </head>
 <body>
     <h3>✅ SMS Logger Active</h3>
-    <p>This activity automatically logs SMS data into <strong>SendLogMasterSMS</strong>.<br>Click <strong>Done</strong> to save.</p>
+    <p>This activity automatically logs SMS data into <strong>SendLogMasterSMS</strong>.</p>
+    <div class="badge">No configuration needed. Click <strong>Done</strong> to save.</div>
 
     <script>
         var connection = new Postmonger.Session();
-        var initialized = false;
 
-        // Wait for Journey Builder to be ready first
+        // Journey Builder sends existing activity data on load
         connection.on('initActivity', function(data) {
-            if (!initialized) {
-                initialized = true;
-                // Tell JB the activity is ready
-                connection.trigger('ready');
-            }
+            // Tell JB iframe is ready — stops the spinner
+            connection.trigger('ready');
         });
 
-        // When user clicks Done button
+        // Called when user clicks the Done button
         connection.on('clickedNext', function() {
-            connection.trigger('updateActivity', {
-                metaData: { isConfigured: true }
-            });
+            save();
         });
 
-        // Also handle clickedDone (some JB versions use this)
         connection.on('clickedDone', function() {
-            connection.trigger('updateActivity', {
-                metaData: { isConfigured: true }
-            });
+            save();
         });
 
-        // Trigger ready after a short delay as fallback
+        function save() {
+            connection.trigger('updateActivity', {
+                metaData: {
+                    isConfigured: true
+                },
+                "arguments": {
+                    "execute": {
+                        "inArguments": [
+                            {
+                                "subscriberKey": "{{Contact.Key}}",
+                                "mobileNumber": "{{Event.MobileNumber}}",
+                                "leadId": "{{Event.LeadId}}",
+                                "applicationId": "{{Event.ApplicationId}}",
+                                "journeyId": "{{Context.InteractionId}}",
+                                "journeyVersion": "{{Context.InteractionVersionId}}",
+                                "activityName": "{{Context.ActivityId}}",
+                                "messageKey": "{{Context.ActivityInstanceId}}",
+                                "source": "Journey"
+                            }
+                        ],
+                        "outArguments": []
+                    }
+                }
+            });
+        }
+
+        // Fallback if initActivity never fires
         setTimeout(function() {
-            if (!initialized) {
-                initialized = true;
-                connection.trigger('ready');
-            }
-        }, 500);
+            connection.trigger('ready');
+        }, 1000);
     </script>
 </body>
 </html>
