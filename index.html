@@ -7,34 +7,53 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
             color: #333;
+            background: #fff;
         }
+        h3 { color: #007bff; }
+        p { font-size: 14px; line-height: 1.5; }
     </style>
 </head>
 <body>
-
-    <h3>SMS Logger Active</h3>
-    <p>This activity automatically logs data. Click <strong>Done</strong> to save.</p>
+    <h3>✅ SMS Logger Active</h3>
+    <p>This activity automatically logs SMS data into <strong>SendLogMasterSMS</strong>.<br>Click <strong>Done</strong> to save.</p>
 
     <script>
-        // Connect to Journey Builder
         var connection = new Postmonger.Session();
+        var initialized = false;
 
-        // 1. As soon as the modal opens, tell Journey Builder to stop spinning
-        connection.trigger('ready');
-
-        // 2. Journey Builder will send existing data; we must listen for it
+        // Wait for Journey Builder to be ready first
         connection.on('initActivity', function(data) {
-            // Nothing to configure, just acknowledging
+            if (!initialized) {
+                initialized = true;
+                // Tell JB the activity is ready
+                connection.trigger('ready');
+            }
         });
 
-        // 3. When the user clicks the blue "Done" button in your screenshot
+        // When user clicks Done button
         connection.on('clickedNext', function() {
-            // Tell Journey Builder to save the step and close the modal
-            connection.trigger('updateActivity', {});
+            connection.trigger('updateActivity', {
+                metaData: { isConfigured: true }
+            });
         });
+
+        // Also handle clickedDone (some JB versions use this)
+        connection.on('clickedDone', function() {
+            connection.trigger('updateActivity', {
+                metaData: { isConfigured: true }
+            });
+        });
+
+        // Trigger ready after a short delay as fallback
+        setTimeout(function() {
+            if (!initialized) {
+                initialized = true;
+                connection.trigger('ready');
+            }
+        }, 500);
     </script>
 </body>
 </html>
