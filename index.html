@@ -5,152 +5,36 @@
     <title>SMS Logger</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/postmonger/0.0.14/postmonger.min.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
-            background: #fff;
+            text-align: center;
             color: #333;
-            font-size: 13px;
-        }
-        h3 {
-            color: #2e7d32;
-            margin-bottom: 16px;
-            font-size: 15px;
-        }
-        .field {
-            margin-bottom: 14px;
-            text-align: left;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 4px;
-            color: #555;
-            font-size: 12px;
-        }
-        input, select {
-            width: 100%;
-            padding: 7px 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 13px;
-            color: #333;
-        }
-        input:focus, select:focus {
-            outline: none;
-            border-color: #007bff;
-        }
-        .hint {
-            font-size: 11px;
-            color: #888;
-            margin-top: 3px;
         }
     </style>
 </head>
 <body>
-    <h3>✅ SMS Logger Configuration</h3>
 
-    <div class="field">
-        <label>Mobile Number Field</label>
-        <input type="text" id="mobileNumber" value="{{Event.MobileNumber}}" placeholder="e.g. {{Event.MobileNumber}}" />
-        <div class="hint">Journey attribute for mobile number</div>
-    </div>
-
-    <div class="field">
-        <label>Lead ID Field</label>
-        <input type="text" id="leadId" value="{{Event.LeadId}}" placeholder="e.g. {{Event.LeadId}}" />
-        <div class="hint">Journey attribute for lead ID</div>
-    </div>
-
-    <div class="field">
-        <label>Application ID Field</label>
-        <input type="text" id="applicationId" value="{{Event.ApplicationId}}" placeholder="e.g. {{Event.ApplicationId}}" />
-        <div class="hint">Journey attribute for application ID</div>
-    </div>
-
-    <div class="field">
-        <label>Source</label>
-        <select id="source">
-            <option value="Journey">Journey</option>
-            <option value="API">API</option>
-            <option value="Manual">Manual</option>
-            <option value="Campaign">Campaign</option>
-        </select>
-        <div class="hint">Source identifier for this log entry</div>
-    </div>
+    <h3>SMS Logger Active</h3>
+    <p>This activity automatically logs data. Click <strong>Done</strong> to save.</p>
 
     <script>
+        // Connect to Journey Builder
         var connection = new Postmonger.Session();
-        var ready = false;
 
-        function triggerReady() {
-            if (!ready) {
-                ready = true;
-                connection.trigger('ready');
-            }
-        }
+        // 1. As soon as the modal opens, tell Journey Builder to stop spinning
+        connection.trigger('ready');
 
-        // Load existing saved values when modal reopens
+        // 2. Journey Builder will send existing data; we must listen for it
         connection.on('initActivity', function(data) {
-            if (
-                data &&
-                data['arguments'] &&
-                data['arguments'].execute &&
-                data['arguments'].execute.inArguments &&
-                data['arguments'].execute.inArguments.length > 0
-            ) {
-                var args = data['arguments'].execute.inArguments[0];
-
-                if (args.mobileNumber)  document.getElementById('mobileNumber').value  = args.mobileNumber;
-                if (args.leadId)        document.getElementById('leadId').value         = args.leadId;
-                if (args.applicationId) document.getElementById('applicationId').value  = args.applicationId;
-                if (args.source) {
-                    var sel = document.getElementById('source');
-                    for (var i = 0; i < sel.options.length; i++) {
-                        if (sel.options[i].value === args.source) {
-                            sel.selectedIndex = i;
-                            break;
-                        }
-                    }
-                }
-            }
-            triggerReady();
+            // Nothing to configure, just acknowledging
         });
 
-        // Save when Done is clicked
-        connection.on('clickedNext', function() { save(); });
-        connection.on('clickedDone', function() { save(); });
-
-        function save() {
-            var mobileNumber  = document.getElementById('mobileNumber').value  || '{{Event.MobileNumber}}';
-            var leadId        = document.getElementById('leadId').value         || '{{Event.LeadId}}';
-            var applicationId = document.getElementById('applicationId').value  || '{{Event.ApplicationId}}';
-            var source        = document.getElementById('source').value         || 'Journey';
-
-            connection.trigger('updateActivity', {
-                metaData: { isConfigured: true },
-                "arguments": {
-                    "execute": {
-                        "inArguments": [{
-                            "subscriberKey":  "{{Contact.Key}}",
-                            "mobileNumber":   mobileNumber,
-                            "leadId":         leadId,
-                            "applicationId":  applicationId,
-                            "journeyId":      "{{Context.InteractionId}}",
-                            "journeyVersion": "{{Context.InteractionVersionId}}",
-                            "activityName":   "{{Context.ActivityId}}",
-                            "messageKey":     "{{Context.ActivityInstanceId}}",
-                            "source":         source
-                        }],
-                        "outArguments": []
-                    }
-                }
-            });
-        }
-
-        // Fallback ready trigger
-        triggerReady();
+        // 3. When the user clicks the blue "Done" button in your screenshot
+        connection.on('clickedNext', function() {
+            // Tell Journey Builder to save the step and close the modal
+            connection.trigger('updateActivity', {});
+        });
     </script>
 </body>
 </html>
