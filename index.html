@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SMS Logger</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/postmonger/0.0.14/postmonger.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <h3>SMS Logger Active</h3>
+    <p>This activity automatically logs data. Click <strong>Done</strong> to save.</p>
+
+    <script>
+        // Connect to Journey Builder
+        var connection = new Postmonger.Session();
+
+        // 1. As soon as the modal opens, tell Journey Builder to stop spinning
+        connection.trigger('ready');
+
+        // 2. Journey Builder will send existing data; we must listen for it
+        connection.on('initActivity', function(data) {
+            // Nothing to configure, just acknowledging
+        });
+
+        // 3. When the user clicks the blue "Done" button in your screenshot
+        connection.on('clickedNext', function() {
+            // Tell Journey Builder to save the step and close the modal
+            connection.trigger('updateActivity', {});
+        });
+    </script>
+</body>
+</html>
