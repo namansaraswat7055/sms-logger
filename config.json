@@ -3,7 +3,9 @@
 
   "metaData": {
     "category": "custom",
-    "icon": "https://cdn-icons-png.flaticon.com/512/724/724664.png"
+    "icon": "https://cdn-icons-png.flaticon.com/512/724/724664.png",
+    "isConfigured": true,
+    "configOnDrop": true
   },
 
   "type": "REST",
