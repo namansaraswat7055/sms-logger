@@ -2,7 +2,7 @@
   "workflowApiVersion": "1.1",
 
   "metaData": {
-    "category": "flow",
+    "category": "message",
     "icon": "https://cdn-icons-png.flaticon.com/512/724/724664.png",
     "isConfigured": true,
     "configOnDrop": true
@@ -55,7 +55,7 @@
 
  "configurationArguments": {
 
-  "applicationExtensionKey": "4ca98a75-f3f0-48e3-bbdf-6f0bf255590d",
+  "applicationExtensionKey": "0204a381-e266-453a-a749-fec9a0cdde30",
 
   "save": {
     "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv",
