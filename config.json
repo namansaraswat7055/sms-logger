@@ -15,8 +15,7 @@
       "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
       "verb": "POST",
       "format": "json",
-      "header": "X-SendLog-Token: a7f3c91e8d2b4f6051c9e7d3b8a2f4e6091c5d7b3a8f2e4c6d091b5a7f3c9e8d",
-      "body": "{\"subscriberKey\": \"{{Contact.Key}}\", \"mobileNumber\": \"{{Event.MobileNumber}}\", \"leadId\": \"{{Event.LeadId}}\", \"applicationId\": \"{{Event.ApplicationId}}\", \"journeyId\": \"{{Context.InteractionId}}\", \"journeyVersion\": \"{{Context.InteractionVersionId}}\", \"activityName\": \"{{Context.ActivityId}}\", \"messageKey\": \"{{Context.ActivityInstanceId}}\", \"source\": \"Journey\"}",
+      "useJwt": true,
       "inArguments": [
         {
           "subscriberKey": "{{Contact.Key}}",
@@ -35,23 +34,20 @@
   },
   "configurationArguments": {
     "publish": {
-      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu"
+      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
+      "useJwt": true
     },
     "validate": {
-      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu"
+      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
+      "useJwt": true
     },
     "stop": {
-      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu"
+      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
+      "useJwt": true
     }
   },
   "userInterfaces": {
     "configModal": {
-      "url": "https://namansaraswat7055.github.io/sms-logger/index.html",
-      "height": 250,
-      "width": 450,
-      "fullscreen": false
-    },
-    "configInspector": {
       "url": "https://namansaraswat7055.github.io/sms-logger/index.html",
       "height": 380,
       "width": 450,
