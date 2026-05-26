@@ -37,7 +37,7 @@
 
       "inArguments": [
         {
-          "subscriberKey": "{{Contact.Key}}",
+          "subscriberKey": "{{Event.SubscriberKey}}",
           "mobileNumber": "{{Event.MobileNumber}}",
           "leadId": "{{Event.LeadId}}",
           "applicationId": "{{Event.ApplicationId}}",
