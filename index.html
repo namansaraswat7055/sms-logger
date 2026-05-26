@@ -8,178 +8,62 @@
     <script src="https://unpkg.com/postmonger/postmonger.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            color: #333;
-            background: #fff;
-            font-size: 13px;
-        }
-
-        h3 {
-            color: #2e7d32;
-            margin-bottom: 16px;
-            font-size: 15px;
-            text-align: center;
-        }
-
-        .field {
-            margin-bottom: 12px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 4px;
-            color: #444;
-            font-size: 12px;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 7px 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 13px;
-            color: #333;
-            background: #fff;
-        }
-
-        .hint {
-            font-size: 11px;
-            color: #888;
-            margin-top: 3px;
-        }
-
-        .badge {
-            background: #e8f5e9;
-            border: 1px solid #a5d6a7;
-            border-radius: 12px;
-            padding: 3px 10px;
-            font-size: 11px;
-            color: #2e7d32;
-            margin-left: 6px;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; padding: 20px; color: #333; background: #fff; font-size: 13px; }
+        h3 { color: #2e7d32; margin-bottom: 16px; font-size: 15px; text-align: center; }
+        .info { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 4px; padding: 10px; font-size: 12px; color: #2e7d32; }
+        .badge { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 12px; padding: 3px 10px; font-size: 11px; color: #2e7d32; margin-left: 6px; }
     </style>
 </head>
-
 <body>
 
 <h3>
     📱 SMS Logger
-    <span class="badge">Active</span>
+    <span class="badge">Hardcoded Test Mode</span>
 </h3>
 
-<div class="field">
-    <label>Mobile Number</label>
-    <input type="text" id="mobileNumber" />
-    <div class="hint">Journey attribute for mobile number</div>
-</div>
-
-<div class="field">
-    <label>Lead ID</label>
-    <input type="text" id="leadId" />
-    <div class="hint">Journey attribute for lead ID</div>
-</div>
-
-<div class="field">
-    <label>Application ID</label>
-    <input type="text" id="applicationId" />
-    <div class="hint">Journey attribute for application ID</div>
-</div>
-
-<div class="field">
-    <label>Source</label>
-
-    <select id="source">
-        <option value="Journey">Journey</option>
-        <option value="API">API</option>
-        <option value="Manual">Manual</option>
-        <option value="Campaign">Campaign</option>
-    </select>
-
-    <div class="hint">
-        Source identifier for this log entry
-    </div>
+<div class="info">
+    This activity uses hardcoded test values for debugging.<br><br>
+    <strong>subscriberKey:</strong> {{Contact.Key}}<br>
+    <strong>mobileNumber:</strong> TEST_HARDCODED_MOBILE<br>
+    <strong>leadId:</strong> TEST_LEAD<br>
+    <strong>applicationId:</strong> TEST_APP<br>
+    <strong>source:</strong> Journey
 </div>
 
 <script>
-
     var connection = new Postmonger.Session();
     var payload = {};
 
     $(window).ready(function () {
-
         connection.on('initActivity', initialize);
-
         connection.on('clickedNext', save);
-
         connection.trigger('ready');
     });
 
     function initialize(data) {
-
-        if (data) {
-            payload = data;
-        }
-
-        try {
-
-            var args = payload.arguments.execute.inArguments[0];
-
-            $('#mobileNumber').val(
-                args.mobileNumber || '{{Event.MobileNumber}}'
-            );
-
-            $('#leadId').val(
-                args.leadId || '{{Event.LeadId}}'
-            );
-
-            $('#applicationId').val(
-                args.applicationId || '{{Event.ApplicationId}}'
-            );
-
-            $('#source').val(
-                args.source || 'Journey'
-            );
-
-        } catch (e) {
-
-            $('#mobileNumber').val('{{Event.MobileNumber}}');
-            $('#leadId').val('{{Event.LeadId}}');
-            $('#applicationId').val('{{Event.ApplicationId}}');
-            $('#source').val('Journey');
-        }
+        if (data) { payload = data; }
     }
 
     function save() {
-
         payload.metaData.isConfigured = true;
 
         payload.arguments.execute.inArguments = [
             {
                 subscriberKey: '{{Contact.Key}}',
-                mobileNumber: $('#mobileNumber').val(),
-                leadId: $('#leadId').val(),
-                applicationId: $('#applicationId').val(),
+                mobileNumber: 'TEST_HARDCODED_MOBILE',
+                leadId: 'TEST_LEAD',
+                applicationId: 'TEST_APP',
                 journeyId: '{{Context.InteractionId}}',
                 journeyVersion: '{{Context.InteractionVersionId}}',
                 activityName: '{{Context.ActivityId}}',
                 messageKey: '{{Context.ActivityInstanceId}}',
-                source: $('#source').val()
+                source: 'Journey'
             }
         ];
 
         connection.trigger('updateActivity', payload);
     }
-
 </script>
 
 </body>
