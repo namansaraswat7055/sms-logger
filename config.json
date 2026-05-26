@@ -50,12 +50,30 @@
       "height": 250,
       "width": 450,
       "fullscreen": false
+    },
+    "configInspector": {
+      "url": "https://namansaraswat7055.github.io/sms-logger/index.html",
+      "height": 100,
+      "width": 450,
+      "fullscreen": false
     }
   },
   "schema": {
     "arguments": {
       "execute": {
-        "inArguments": [],
+        "inArguments": [
+          {
+            "subscriberKey": "",
+            "mobileNumber": "",
+            "leadId": "",
+            "applicationId": "",
+            "journeyId": "",
+            "journeyVersion": "",
+            "activityName": "",
+            "messageKey": "",
+            "source": ""
+          }
+        ],
         "outArguments": []
       }
     }
