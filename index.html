@@ -20,7 +20,9 @@
 <body>
     <div class="icon">✅</div>
     <h3>SMS Logger Active</h3>
-    <p>This activity automatically logs SMS data<br>into <strong>SendLogMasterSMS</strong>.<br>Click <strong>Done</strong> to save.</p>
+    <p>This activity automatically logs SMS data<br>
+    into <strong>SendLogMasterSMS</strong>.<br>
+    Click <strong>Done</strong> to save.</p>
 
     <script>
         var defined = false;
@@ -46,50 +48,58 @@
         };
 
         function sendToJB(eventName, data) {
-            var payload = { eventName: eventName };
-            if (data) payload.data = data;
-            // Send to parent Journey Builder frame
-            window.parent.postMessage(JSON.stringify(payload), '*');
+            // Format 1 — wrapped payload (what JB usually expects)
+            var wrapped = { eventName: eventName };
+            if (data) wrapped.data = data;
+            window.parent.postMessage(JSON.stringify(wrapped), '*');
+
+            // Format 2 — flat payload (some JB versions expect this)
+            if (data) {
+                var flat = JSON.parse(JSON.stringify(data));
+                flat.eventName = eventName;
+                window.parent.postMessage(JSON.stringify(flat), '*');
+            }
+        }
+
+        function triggerReady() {
+            if (!defined) {
+                defined = true;
+            }
+            sendToJB('ready');
+        }
+
+        function save() {
+            sendToJB('updateActivity', activityData);
         }
 
         // Listen for messages from Journey Builder
         window.addEventListener('message', function(event) {
             var data;
             try {
-                data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+                data = typeof event.data === 'string'
+                    ? JSON.parse(event.data)
+                    : event.data;
             } catch(e) { return; }
 
             if (!data || !data.eventName) return;
 
-            if (data.eventName === 'requestedTriggerEventDefinition' ||
-                data.eventName === 'initActivity' ||
+            if (data.eventName === 'initActivity'             ||
+                data.eventName === 'requestedTriggerEventDefinition' ||
                 data.eventName === 'initActivityRunningHover') {
-
-                if (!defined) {
-                    defined = true;
-                    // Tell JB we are ready
-                    sendToJB('ready');
-                }
+                triggerReady();
             }
 
-            // User clicked Done
-            if (data.eventName === 'clickedNext' || data.eventName === 'clickedDone') {
-                sendToJB('updateActivity', activityData);
+            if (data.eventName === 'clickedNext' ||
+                data.eventName === 'clickedDone') {
+                save();
             }
         });
 
-        // Fire ready immediately on load
-        setTimeout(function() {
-            sendToJB('ready');
-        }, 100);
-
-        // Fire again after 500ms as fallback
-        setTimeout(function() {
-            if (!defined) {
-                defined = true;
-                sendToJB('ready');
-            }
-        }, 500);
+        // Fire ready on load — multiple attempts
+        setTimeout(function() { triggerReady(); }, 50);
+        setTimeout(function() { triggerReady(); }, 300);
+        setTimeout(function() { triggerReady(); }, 800);
+        setTimeout(function() { triggerReady(); }, 2000);
     </script>
 </body>
 </html>
