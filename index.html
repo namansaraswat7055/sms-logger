@@ -7,53 +7,137 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: Arial, sans-serif;
-            padding: 24px 20px;
+            padding: 20px;
+            color: #333;
+            background: #fff;
+            font-size: 13px;
+        }
+        h3 {
+            color: #2e7d32;
+            margin-bottom: 16px;
+            font-size: 15px;
             text-align: center;
+        }
+        .field {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #444;
+            font-size: 12px;
+        }
+        input, select {
+            width: 100%;
+            padding: 7px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
             color: #333;
             background: #fff;
         }
-        h3 { color: #2e7d32; margin-bottom: 12px; font-size: 16px; }
-        p { font-size: 13px; line-height: 1.7; color: #555; }
-        .icon { font-size: 32px; margin-bottom: 8px; }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 2px rgba(46,125,50,0.15);
+        }
+        .hint {
+            font-size: 11px;
+            color: #888;
+            margin-top: 3px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .badge {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            border-radius: 12px;
+            padding: 3px 10px;
+            font-size: 11px;
+            color: #2e7d32;
+        }
     </style>
 </head>
 <body>
-    <div class="icon">✅</div>
-    <h3>SMS Logger Active</h3>
-    <p>This activity automatically logs SMS data<br>
-    into <strong>SendLogMasterSMS</strong>.<br>
-    Click <strong>Done</strong> to save.</p>
+
+    <div class="header">
+        <h3>📱 SMS Logger</h3>
+        <span class="badge">Active</span>
+    </div>
+
+    <div class="field">
+        <label>Mobile Number</label>
+        <input type="text" id="mobileNumber"
+            value="{{Event.MobileNumber}}"
+            placeholder="e.g. {{Event.MobileNumber}}" />
+        <div class="hint">Journey attribute for mobile number</div>
+    </div>
+
+    <div class="field">
+        <label>Lead ID</label>
+        <input type="text" id="leadId"
+            value="{{Event.LeadId}}"
+            placeholder="e.g. {{Event.LeadId}}" />
+        <div class="hint">Journey attribute for lead ID</div>
+    </div>
+
+    <div class="field">
+        <label>Application ID</label>
+        <input type="text" id="applicationId"
+            value="{{Event.ApplicationId}}"
+            placeholder="e.g. {{Event.ApplicationId}}" />
+        <div class="hint">Journey attribute for application ID</div>
+    </div>
+
+    <div class="field">
+        <label>Source</label>
+        <select id="source">
+            <option value="Journey">Journey</option>
+            <option value="API">API</option>
+            <option value="Manual">Manual</option>
+            <option value="Campaign">Campaign</option>
+        </select>
+        <div class="hint">Source identifier for this log entry</div>
+    </div>
 
     <script>
         var defined = false;
 
-        var activityData = {
-            metaData: { isConfigured: true },
-            "arguments": {
-                "execute": {
-                    "inArguments": [{
-                        "subscriberKey":  "{{Contact.Key}}",
-                        "mobileNumber":   "{{Event.MobileNumber}}",
-                        "leadId":         "{{Event.LeadId}}",
-                        "applicationId":  "{{Event.ApplicationId}}",
-                        "journeyId":      "{{Context.InteractionId}}",
-                        "journeyVersion": "{{Context.InteractionVersionId}}",
-                        "activityName":   "{{Context.ActivityId}}",
-                        "messageKey":     "{{Context.ActivityInstanceId}}",
-                        "source":         "Journey"
-                    }],
-                    "outArguments": []
+        function getActivityData() {
+            return {
+                metaData: { isConfigured: true },
+                "arguments": {
+                    "execute": {
+                        "inArguments": [{
+                            "subscriberKey":  "{{Contact.Key}}",
+                            "mobileNumber":   document.getElementById('mobileNumber').value   || "{{Event.MobileNumber}}",
+                            "leadId":         document.getElementById('leadId').value          || "{{Event.LeadId}}",
+                            "applicationId":  document.getElementById('applicationId').value   || "{{Event.ApplicationId}}",
+                            "journeyId":      "{{Context.InteractionId}}",
+                            "journeyVersion": "{{Context.InteractionVersionId}}",
+                            "activityName":   "{{Context.ActivityId}}",
+                            "messageKey":     "{{Context.ActivityInstanceId}}",
+                            "source":         document.getElementById('source').value          || "Journey"
+                        }],
+                        "outArguments": []
+                    }
                 }
-            }
-        };
+            };
+        }
 
         function sendToJB(eventName, data) {
-            // Format 1 — wrapped payload (what JB usually expects)
+            // Format 1 — wrapped
             var wrapped = { eventName: eventName };
             if (data) wrapped.data = data;
             window.parent.postMessage(JSON.stringify(wrapped), '*');
 
-            // Format 2 — flat payload (some JB versions expect this)
+            // Format 2 — flat
             if (data) {
                 var flat = JSON.parse(JSON.stringify(data));
                 flat.eventName = eventName;
@@ -62,17 +146,15 @@
         }
 
         function triggerReady() {
-            if (!defined) {
-                defined = true;
-            }
+            defined = true;
             sendToJB('ready');
         }
 
         function save() {
-            sendToJB('updateActivity', activityData);
+            sendToJB('updateActivity', getActivityData());
         }
 
-        // Listen for messages from Journey Builder
+        // Load previously saved values when modal reopens
         window.addEventListener('message', function(event) {
             var data;
             try {
@@ -83,8 +165,31 @@
 
             if (!data || !data.eventName) return;
 
-            if (data.eventName === 'initActivity'             ||
-                data.eventName === 'requestedTriggerEventDefinition' ||
+            // Restore saved values
+            if (data.eventName === 'initActivity') {
+                triggerReady();
+                var args = null;
+                try {
+                    args = data.arguments.execute.inArguments[0];
+                } catch(e) {}
+
+                if (args) {
+                    if (args.mobileNumber)  document.getElementById('mobileNumber').value  = args.mobileNumber;
+                    if (args.leadId)        document.getElementById('leadId').value         = args.leadId;
+                    if (args.applicationId) document.getElementById('applicationId').value  = args.applicationId;
+                    if (args.source) {
+                        var sel = document.getElementById('source');
+                        for (var i = 0; i < sel.options.length; i++) {
+                            if (sel.options[i].value === args.source) {
+                                sel.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (data.eventName === 'requestedTriggerEventDefinition' ||
                 data.eventName === 'initActivityRunningHover') {
                 triggerReady();
             }
@@ -95,7 +200,7 @@
             }
         });
 
-        // Fire ready on load — multiple attempts
+        // Fire ready multiple times as fallback
         setTimeout(function() { triggerReady(); }, 50);
         setTimeout(function() { triggerReady(); }, 300);
         setTimeout(function() { triggerReady(); }, 800);
