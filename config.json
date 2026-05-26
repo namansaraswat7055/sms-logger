@@ -2,13 +2,13 @@
   "workflowApiVersion": "1.1",
 
   "metaData": {
-    "category": "custom",
+    "category": "flow",
     "icon": "https://cdn-icons-png.flaticon.com/512/724/724664.png",
     "isConfigured": true,
     "configOnDrop": true
   },
 
-  "type": "REST",
+  "type": "Rest",
 
   "lang": {
     "en-US": {
