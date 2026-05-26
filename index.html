@@ -3,110 +3,184 @@
 <head>
     <meta charset="utf-8">
     <title>SMS Logger</title>
-    <script src="postmonger.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/postmonger/postmonger.js"></script>
+
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial, sans-serif; padding: 20px; color: #333; background: #fff; font-size: 13px; }
-        h3 { color: #2e7d32; margin-bottom: 16px; font-size: 15px; text-align: center; }
-        .field { margin-bottom: 12px; }
-        label { display: block; font-weight: bold; margin-bottom: 4px; color: #444; font-size: 12px; }
-        input, select { width: 100%; padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; color: #333; background: #fff; }
-        input:focus, select:focus { outline: none; border-color: #2e7d32; }
-        .hint { font-size: 11px; color: #888; margin-top: 3px; }
-        .badge { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 12px; padding: 3px 10px; font-size: 11px; color: #2e7d32; margin-left: 6px; }
-    </style>
-</head>
-<body>
-    <h3>📱 SMS Logger <span class="badge">Active</span></h3>
-
-    <div class="field">
-        <label>Mobile Number</label>
-        <input type="text" id="mobileNumber" value="{{Event.MobileNumber}}" />
-        <div class="hint">Journey attribute for mobile number</div>
-    </div>
-    <div class="field">
-        <label>Lead ID</label>
-        <input type="text" id="leadId" value="{{Event.LeadId}}" />
-        <div class="hint">Journey attribute for lead ID</div>
-    </div>
-    <div class="field">
-        <label>Application ID</label>
-        <input type="text" id="applicationId" value="{{Event.ApplicationId}}" />
-        <div class="hint">Journey attribute for application ID</div>
-    </div>
-    <div class="field">
-        <label>Source</label>
-        <select id="source">
-            <option value="Journey">Journey</option>
-            <option value="API">API</option>
-            <option value="Manual">Manual</option>
-            <option value="Campaign">Campaign</option>
-        </select>
-        <div class="hint">Source identifier for this log entry</div>
-    </div>
-
-    <script>
-        var connection = new Postmonger.Session();
-        var initialized = false;
-
-        function getActivityData() {
-            return {
-                metaData: { isConfigured: true },
-                arguments: {
-                    execute: {
-                        inArguments: [{
-                            subscriberKey:  '{{Contact.Key}}',
-                            mobileNumber:   document.getElementById('mobileNumber').value   || '{{Event.MobileNumber}}',
-                            leadId:         document.getElementById('leadId').value          || '{{Event.LeadId}}',
-                            applicationId:  document.getElementById('applicationId').value   || '{{Event.ApplicationId}}',
-                            journeyId:      '{{Context.InteractionId}}',
-                            journeyVersion: '{{Context.InteractionVersionId}}',
-                            activityName:   '{{Context.ActivityId}}',
-                            messageKey:     '{{Context.ActivityInstanceId}}',
-                            source:         document.getElementById('source').value          || 'Journey'
-                        }],
-                        outArguments: []
-                    }
-                }
-            };
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        // Step 1 — JB calls initActivity after ready
-        connection.on('initActivity', function(data) {
-            initialized = true;
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            color: #333;
+            background: #fff;
+            font-size: 13px;
+        }
 
-            // Restore saved values if reopening
-            try {
-                var args = data.arguments.execute.inArguments[0];
-                if (args.mobileNumber)  document.getElementById('mobileNumber').value  = args.mobileNumber;
-                if (args.leadId)        document.getElementById('leadId').value         = args.leadId;
-                if (args.applicationId) document.getElementById('applicationId').value  = args.applicationId;
-                if (args.source) {
-                    var sel = document.getElementById('source');
-                    for (var i = 0; i < sel.options.length; i++) {
-                        if (sel.options[i].value === args.source) {
-                            sel.selectedIndex = i;
-                            break;
-                        }
-                    }
-                }
-            } catch(e) {}
+        h3 {
+            color: #2e7d32;
+            margin-bottom: 16px;
+            font-size: 15px;
+            text-align: center;
+        }
 
-            // Step 2 — Tell JB we are ready after loading data
-            connection.trigger('ready');
-        });
+        .field {
+            margin-bottom: 12px;
+        }
 
-        // Step 3 — JB sends clickedNext when Done is clicked
-        connection.on('clickedNext', function() {
-            connection.trigger('updateActivity', getActivityData());
-        });
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #444;
+            font-size: 12px;
+        }
 
-        connection.on('clickedDone', function() {
-            connection.trigger('updateActivity', getActivityData());
-        });
+        input,
+        select {
+            width: 100%;
+            padding: 7px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #333;
+            background: #fff;
+        }
 
-        // Step 1 — Tell JB iframe has loaded
+        .hint {
+            font-size: 11px;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .badge {
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            border-radius: 12px;
+            padding: 3px 10px;
+            font-size: 11px;
+            color: #2e7d32;
+            margin-left: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h3>
+    📱 SMS Logger
+    <span class="badge">Active</span>
+</h3>
+
+<div class="field">
+    <label>Mobile Number</label>
+    <input type="text" id="mobileNumber" />
+    <div class="hint">Journey attribute for mobile number</div>
+</div>
+
+<div class="field">
+    <label>Lead ID</label>
+    <input type="text" id="leadId" />
+    <div class="hint">Journey attribute for lead ID</div>
+</div>
+
+<div class="field">
+    <label>Application ID</label>
+    <input type="text" id="applicationId" />
+    <div class="hint">Journey attribute for application ID</div>
+</div>
+
+<div class="field">
+    <label>Source</label>
+
+    <select id="source">
+        <option value="Journey">Journey</option>
+        <option value="API">API</option>
+        <option value="Manual">Manual</option>
+        <option value="Campaign">Campaign</option>
+    </select>
+
+    <div class="hint">
+        Source identifier for this log entry
+    </div>
+</div>
+
+<script>
+
+    var connection = new Postmonger.Session();
+    var payload = {};
+
+    $(window).ready(function () {
+
+        connection.on('initActivity', initialize);
+
+        connection.on('clickedNext', save);
+
         connection.trigger('ready');
-    </script>
+    });
+
+    function initialize(data) {
+
+        if (data) {
+            payload = data;
+        }
+
+        try {
+
+            var args = payload.arguments.execute.inArguments[0];
+
+            $('#mobileNumber').val(
+                args.mobileNumber || '{{Event.MobileNumber}}'
+            );
+
+            $('#leadId').val(
+                args.leadId || '{{Event.LeadId}}'
+            );
+
+            $('#applicationId').val(
+                args.applicationId || '{{Event.ApplicationId}}'
+            );
+
+            $('#source').val(
+                args.source || 'Journey'
+            );
+
+        } catch (e) {
+
+            $('#mobileNumber').val('{{Event.MobileNumber}}');
+            $('#leadId').val('{{Event.LeadId}}');
+            $('#applicationId').val('{{Event.ApplicationId}}');
+            $('#source').val('Journey');
+        }
+    }
+
+    function save() {
+
+        payload.metaData.isConfigured = true;
+
+        payload.arguments.execute.inArguments = [
+            {
+                subscriberKey: '{{Contact.Key}}',
+                mobileNumber: $('#mobileNumber').val(),
+                leadId: $('#leadId').val(),
+                applicationId: $('#applicationId').val(),
+                journeyId: '{{Context.InteractionId}}',
+                journeyVersion: '{{Context.InteractionVersionId}}',
+                activityName: '{{Context.ActivityId}}',
+                messageKey: '{{Context.ActivityInstanceId}}',
+                source: $('#source').val()
+            }
+        ];
+
+        connection.trigger('updateActivity', payload);
+    }
+
+</script>
+
 </body>
 </html>
