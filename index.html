@@ -12,28 +12,25 @@
         input, select { width: 100%; padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; color: #333; background: #fff; }
         input:focus, select:focus { outline: none; border-color: #2e7d32; }
         .hint { font-size: 11px; color: #888; margin-top: 3px; }
-        .header { text-align: center; margin-bottom: 16px; }
         .badge { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 12px; padding: 3px 10px; font-size: 11px; color: #2e7d32; margin-left: 6px; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h3>📱 SMS Logger <span class="badge">Active</span></h3>
-    </div>
+    <h3>📱 SMS Logger <span class="badge">Active</span></h3>
 
     <div class="field">
         <label>Mobile Number</label>
-        <input type="text" id="mobileNumber" value="{{Event.MobileNumber}}" placeholder="{{Event.MobileNumber}}" />
+        <input type="text" id="mobileNumber" value="{{Event.MobileNumber}}" />
         <div class="hint">Journey attribute for mobile number</div>
     </div>
     <div class="field">
         <label>Lead ID</label>
-        <input type="text" id="leadId" value="{{Event.LeadId}}" placeholder="{{Event.LeadId}}" />
+        <input type="text" id="leadId" value="{{Event.LeadId}}" />
         <div class="hint">Journey attribute for lead ID</div>
     </div>
     <div class="field">
         <label>Application ID</label>
-        <input type="text" id="applicationId" value="{{Event.ApplicationId}}" placeholder="{{Event.ApplicationId}}" />
+        <input type="text" id="applicationId" value="{{Event.ApplicationId}}" />
         <div class="hint">Journey attribute for application ID</div>
     </div>
     <div class="field">
@@ -47,15 +44,8 @@
         <div class="hint">Source identifier for this log entry</div>
     </div>
 
-    <!-- Postmonger inlined — no CDN dependency -->
     <script>
-    // Postmonger v0.0.16 inlined
-    !function(e){var t={};function n(r){if(t[r])return t[r].exports;var o=t[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,n),o.l=!0,o.exports}n.m=e,n.c=t,n.d=function(e,t,r){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var o in e)n.d(r,o,function(t){return e[t]}.bind(null,o));return r},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=0)}([function(e,t){var n=window.Postmonger={};n.Session=function(){var e=this;e.handlers={},e.trigger=function(t,n){var r=JSON.stringify({eventName:t,value:n});window.parent.postMessage(r,"*")},e.on=function(t,n){e.handlers[t]||(e.handlers[t]=[]),e.handlers[t].push(n)},window.addEventListener("message",function(t){var n;try{n=JSON.parse(t.data)}catch(e){return}n&&n.eventName&&e.handlers[n.eventName]&&e.handlers[n.eventName].forEach(function(e){e(n.value)})})}}]);
-    </script>
-
-    <script>
-        var connection = new Postmonger.Session();
-        var ready = false;
+        var jbOrigin = 'https://jbinteractions.s12.marketingcloudapps.com';
 
         function getActivityData() {
             return {
@@ -79,46 +69,58 @@
             };
         }
 
-        function triggerReady() {
-            if (!ready) {
-                ready = true;
-                connection.trigger('ready');
-            }
+        function send(eventName, value) {
+            var msg = { eventName: eventName };
+            if (value !== undefined) msg.value = value;
+            // Send to all possible origins
+            window.parent.postMessage(JSON.stringify(msg), '*');
         }
 
-        // Load saved values when modal reopens
-        connection.on('initActivity', function(data) {
-            triggerReady();
-            if (data && data.arguments && data.arguments.execute &&
-                data.arguments.execute.inArguments &&
-                data.arguments.execute.inArguments.length > 0) {
-                var args = data.arguments.execute.inArguments[0];
-                if (args.mobileNumber)  document.getElementById('mobileNumber').value  = args.mobileNumber;
-                if (args.leadId)        document.getElementById('leadId').value         = args.leadId;
-                if (args.applicationId) document.getElementById('applicationId').value  = args.applicationId;
-                if (args.source) {
-                    var sel = document.getElementById('source');
-                    for (var i = 0; i < sel.options.length; i++) {
-                        if (sel.options[i].value === args.source) {
-                            sel.selectedIndex = i;
-                            break;
+        function ready() {
+            send('ready');
+        }
+
+        function save() {
+            send('updateActivity', getActivityData());
+        }
+
+        // Listen for JB messages
+        window.addEventListener('message', function(event) {
+            var data;
+            try {
+                data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+            } catch(e) { return; }
+
+            if (!data || !data.eventName) return;
+
+            switch(data.eventName) {
+                case 'initActivity':
+                    // Restore saved values
+                    var args = null;
+                    try { args = data.value.arguments.execute.inArguments[0]; } catch(e) {}
+                    if (args) {
+                        if (args.mobileNumber)  document.getElementById('mobileNumber').value  = args.mobileNumber;
+                        if (args.leadId)        document.getElementById('leadId').value         = args.leadId;
+                        if (args.applicationId) document.getElementById('applicationId').value  = args.applicationId;
+                        if (args.source) {
+                            var sel = document.getElementById('source');
+                            for (var i = 0; i < sel.options.length; i++) {
+                                if (sel.options[i].value === args.source) { sel.selectedIndex = i; break; }
+                            }
                         }
                     }
-                }
+                    ready();
+                    break;
+                case 'clickedNext':
+                case 'clickedDone':
+                    save();
+                    break;
             }
         });
 
-        connection.on('clickedNext', function() {
-            connection.trigger('updateActivity', getActivityData());
-        });
-
-        connection.on('clickedDone', function() {
-            connection.trigger('updateActivity', getActivityData());
-        });
-
-        // Fallback ready trigger
-        setTimeout(function() { triggerReady(); }, 500);
-        setTimeout(function() { triggerReady(); }, 1500);
+        // Fire ready on load
+        setTimeout(function() { ready(); }, 100);
+        setTimeout(function() { ready(); }, 500);
     </script>
 </body>
 </html>
