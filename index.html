@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>SMS Logger</title>
+    <script src="postmonger.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: Arial, sans-serif; padding: 20px; color: #333; background: #fff; font-size: 13px; }
@@ -45,82 +46,61 @@
     </div>
 
     <script>
-        var jbOrigin = 'https://jbinteractions.s12.marketingcloudapps.com';
+        var connection = new Postmonger.Session();
+        var ready = false;
 
         function getActivityData() {
             return {
                 metaData: { isConfigured: true },
-                "arguments": {
-                    "execute": {
-                        "inArguments": [{
-                            "subscriberKey":  "{{Contact.Key}}",
-                            "mobileNumber":   document.getElementById('mobileNumber').value   || "{{Event.MobileNumber}}",
-                            "leadId":         document.getElementById('leadId').value          || "{{Event.LeadId}}",
-                            "applicationId":  document.getElementById('applicationId').value   || "{{Event.ApplicationId}}",
-                            "journeyId":      "{{Context.InteractionId}}",
-                            "journeyVersion": "{{Context.InteractionVersionId}}",
-                            "activityName":   "{{Context.ActivityId}}",
-                            "messageKey":     "{{Context.ActivityInstanceId}}",
-                            "source":         document.getElementById('source').value          || "Journey"
+                arguments: {
+                    execute: {
+                        inArguments: [{
+                            subscriberKey:  '{{Contact.Key}}',
+                            mobileNumber:   document.getElementById('mobileNumber').value   || '{{Event.MobileNumber}}',
+                            leadId:         document.getElementById('leadId').value          || '{{Event.LeadId}}',
+                            applicationId:  document.getElementById('applicationId').value   || '{{Event.ApplicationId}}',
+                            journeyId:      '{{Context.InteractionId}}',
+                            journeyVersion: '{{Context.InteractionVersionId}}',
+                            activityName:   '{{Context.ActivityId}}',
+                            messageKey:     '{{Context.ActivityInstanceId}}',
+                            source:         document.getElementById('source').value          || 'Journey'
                         }],
-                        "outArguments": []
+                        outArguments: []
                     }
                 }
             };
         }
 
-        function send(eventName, value) {
-            var msg = { eventName: eventName };
-            if (value !== undefined) msg.value = value;
-            // Send to all possible origins
-            window.parent.postMessage(JSON.stringify(msg), '*');
-        }
-
-        function ready() {
-            send('ready');
-        }
-
-        function save() {
-            send('updateActivity', getActivityData());
-        }
-
-        // Listen for JB messages
-        window.addEventListener('message', function(event) {
-            var data;
-            try {
-                data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
-            } catch(e) { return; }
-
-            if (!data || !data.eventName) return;
-
-            switch(data.eventName) {
-                case 'initActivity':
-                    // Restore saved values
-                    var args = null;
-                    try { args = data.value.arguments.execute.inArguments[0]; } catch(e) {}
-                    if (args) {
-                        if (args.mobileNumber)  document.getElementById('mobileNumber').value  = args.mobileNumber;
-                        if (args.leadId)        document.getElementById('leadId').value         = args.leadId;
-                        if (args.applicationId) document.getElementById('applicationId').value  = args.applicationId;
-                        if (args.source) {
-                            var sel = document.getElementById('source');
-                            for (var i = 0; i < sel.options.length; i++) {
-                                if (sel.options[i].value === args.source) { sel.selectedIndex = i; break; }
-                            }
-                        }
-                    }
-                    ready();
-                    break;
-                case 'clickedNext':
-                case 'clickedDone':
-                    save();
-                    break;
+        connection.on('initActivity', function(data) {
+            if (!ready) {
+                ready = true;
+                connection.trigger('ready');
             }
+            // Restore previously saved values
+            try {
+                var args = data.arguments.execute.inArguments[0];
+                if (args.mobileNumber)  document.getElementById('mobileNumber').value  = args.mobileNumber;
+                if (args.leadId)        document.getElementById('leadId').value         = args.leadId;
+                if (args.applicationId) document.getElementById('applicationId').value  = args.applicationId;
+                if (args.source) {
+                    var sel = document.getElementById('source');
+                    for (var i = 0; i < sel.options.length; i++) {
+                        if (sel.options[i].value === args.source) { sel.selectedIndex = i; break; }
+                    }
+                }
+            } catch(e) {}
         });
 
-        // Fire ready on load
-        setTimeout(function() { ready(); }, 100);
-        setTimeout(function() { ready(); }, 500);
+        connection.on('clickedNext', function() {
+            connection.trigger('updateActivity', getActivityData());
+        });
+
+        connection.on('clickedDone', function() {
+            connection.trigger('updateActivity', getActivityData());
+        });
+
+        // Trigger ready on load
+        connection.trigger('ready');
     </script>
 </body>
 </html>
