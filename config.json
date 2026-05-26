@@ -51,30 +51,30 @@
     }
   },
 
-  "configurationArguments": {
+ "configurationArguments": {
 
-    "applicationExtensionKey": "4ca98a75-f3f0-48e3-bbdf-6f0bf255590d",
+  "applicationExtensionKey": "4ca98a75-f3f0-48e3-bbdf-6f0bf255590d",
 
-    "save": {
-      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
-      "useJwt": true
-    },
-
-    "publish": {
-      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
-      "useJwt": true
-    },
-
-    "validate": {
-      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
-      "useJwt": true
-    },
-
-    "stop": {
-      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
-      "useJwt": true
-    }
+  "save": {
+    "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv",
+    "useJwt": false
   },
+
+  "publish": {
+    "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv",
+    "useJwt": false
+  },
+
+  "validate": {
+    "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv",
+    "useJwt": false
+  },
+
+  "stop": {
+    "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv",
+    "useJwt": false
+  }
+},
 
   "userInterfaces": {
     "configModal": {
