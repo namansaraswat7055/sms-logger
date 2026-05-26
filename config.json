@@ -1,21 +1,38 @@
 {
   "workflowApiVersion": "1.1",
+
   "metaData": {
-    "category": "message"
+    "category": "custom",
+    "icon": "https://cdn-icons-png.flaticon.com/512/724/724664.png"
   },
+
   "type": "REST",
+
   "lang": {
     "en-US": {
       "name": "SMS Logger",
       "description": "Logs SMS data into SendLogMasterSMS"
     }
   },
+
   "arguments": {
     "execute": {
       "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
+
       "verb": "POST",
+
       "format": "json",
+
       "useJwt": true,
+
+      "timeout": 10000,
+
+      "retryCount": 1,
+
+      "retryDelay": 1000,
+
+      "concurrentRequests": 6,
+
       "inArguments": [
         {
           "subscriberKey": "{{Contact.Key}}",
@@ -29,47 +46,97 @@
           "source": "Journey"
         }
       ],
+
       "outArguments": []
     }
   },
+
   "configurationArguments": {
+
+    "applicationExtensionKey": "4ca98a75-f3f0-48e3-bbdf-6f0bf255590d",
+
+    "save": {
+      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
+      "useJwt": true
+    },
+
     "publish": {
       "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
       "useJwt": true
     },
+
     "validate": {
       "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
       "useJwt": true
     },
+
     "stop": {
       "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
       "useJwt": true
     }
   },
+
   "userInterfaces": {
     "configModal": {
       "url": "https://namansaraswat7055.github.io/sms-logger/index.html",
-      "height": 380,
-      "width": 450,
+      "height": 500,
+      "width": 600,
       "fullscreen": false
     }
   },
+
   "schema": {
     "arguments": {
       "execute": {
         "inArguments": [
           {
-            "subscriberKey": "",
-            "mobileNumber": "",
-            "leadId": "",
-            "applicationId": "",
-            "journeyId": "",
-            "journeyVersion": "",
-            "activityName": "",
-            "messageKey": "",
-            "source": ""
+            "subscriberKey": {
+              "dataType": "Text",
+              "direction": "in"
+            },
+
+            "mobileNumber": {
+              "dataType": "Text",
+              "direction": "in"
+            },
+
+            "leadId": {
+              "dataType": "Text",
+              "direction": "in"
+            },
+
+            "applicationId": {
+              "dataType": "Text",
+              "direction": "in"
+            },
+
+            "journeyId": {
+              "dataType": "Text",
+              "direction": "in"
+            },
+
+            "journeyVersion": {
+              "dataType": "Text",
+              "direction": "in"
+            },
+
+            "activityName": {
+              "dataType": "Text",
+              "direction": "in"
+            },
+
+            "messageKey": {
+              "dataType": "Text",
+              "direction": "in"
+            },
+
+            "source": {
+              "dataType": "Text",
+              "direction": "in"
+            }
           }
         ],
+
         "outArguments": []
       }
     }
