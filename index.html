@@ -3,64 +3,93 @@
 <head>
     <meta charset="utf-8">
     <title>SMS Logger</title>
-    <script src="https://cdn.jsdelivr.net/npm/postmonger@0.0.16/postmonger.js"></script>
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
+            padding: 24px 20px;
             text-align: center;
             color: #333;
             background: #fff;
         }
-        h3 { color: #2e7d32; }
-        p { font-size: 14px; line-height: 1.6; }
+        h3 { color: #2e7d32; margin-bottom: 12px; font-size: 16px; }
+        p { font-size: 13px; line-height: 1.7; color: #555; }
+        .icon { font-size: 32px; margin-bottom: 8px; }
     </style>
 </head>
 <body>
-    <h3>✅ SMS Logger Active</h3>
-    <p>This activity automatically logs SMS data.<br>Click <strong>Done</strong> to save.</p>
+    <div class="icon">✅</div>
+    <h3>SMS Logger Active</h3>
+    <p>This activity automatically logs SMS data<br>into <strong>SendLogMasterSMS</strong>.<br>Click <strong>Done</strong> to save.</p>
 
     <script>
-        var connection = new Postmonger.Session();
-        var ready = false;
+        var defined = false;
 
-        function triggerReady() {
-            if (!ready) {
-                ready = true;
-                connection.trigger('ready');
+        var activityData = {
+            metaData: { isConfigured: true },
+            "arguments": {
+                "execute": {
+                    "inArguments": [{
+                        "subscriberKey":  "{{Contact.Key}}",
+                        "mobileNumber":   "{{Event.MobileNumber}}",
+                        "leadId":         "{{Event.LeadId}}",
+                        "applicationId":  "{{Event.ApplicationId}}",
+                        "journeyId":      "{{Context.InteractionId}}",
+                        "journeyVersion": "{{Context.InteractionVersionId}}",
+                        "activityName":   "{{Context.ActivityId}}",
+                        "messageKey":     "{{Context.ActivityInstanceId}}",
+                        "source":         "Journey"
+                    }],
+                    "outArguments": []
+                }
             }
+        };
+
+        function sendToJB(eventName, data) {
+            var payload = { eventName: eventName };
+            if (data) payload.data = data;
+            // Send to parent Journey Builder frame
+            window.parent.postMessage(JSON.stringify(payload), '*');
         }
 
-        connection.on('initActivity', function(data) {
-            triggerReady();
+        // Listen for messages from Journey Builder
+        window.addEventListener('message', function(event) {
+            var data;
+            try {
+                data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+            } catch(e) { return; }
+
+            if (!data || !data.eventName) return;
+
+            if (data.eventName === 'requestedTriggerEventDefinition' ||
+                data.eventName === 'initActivity' ||
+                data.eventName === 'initActivityRunningHover') {
+
+                if (!defined) {
+                    defined = true;
+                    // Tell JB we are ready
+                    sendToJB('ready');
+                }
+            }
+
+            // User clicked Done
+            if (data.eventName === 'clickedNext' || data.eventName === 'clickedDone') {
+                sendToJB('updateActivity', activityData);
+            }
         });
 
-        connection.on('clickedNext', function() { save(); });
-        connection.on('clickedDone', function() { save(); });
+        // Fire ready immediately on load
+        setTimeout(function() {
+            sendToJB('ready');
+        }, 100);
 
-        function save() {
-            connection.trigger('updateActivity', {
-                metaData: { isConfigured: true },
-                "arguments": {
-                    "execute": {
-                        "inArguments": [{
-                            "subscriberKey":  "{{Contact.Key}}",
-                            "mobileNumber":   "{{Event.MobileNumber}}",
-                            "leadId":         "{{Event.LeadId}}",
-                            "applicationId":  "{{Event.ApplicationId}}",
-                            "journeyId":      "{{Context.InteractionId}}",
-                            "journeyVersion": "{{Context.InteractionVersionId}}",
-                            "activityName":   "{{Context.ActivityId}}",
-                            "messageKey":     "{{Context.ActivityInstanceId}}",
-                            "source":         "Journey"
-                        }],
-                        "outArguments": []
-                    }
-                }
-            });
-        }
-
-        setTimeout(function() { triggerReady(); }, 1000);
+        // Fire again after 500ms as fallback
+        setTimeout(function() {
+            if (!defined) {
+                defined = true;
+                sendToJB('ready');
+            }
+        }, 500);
     </script>
 </body>
 </html>
