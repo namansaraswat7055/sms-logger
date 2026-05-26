@@ -47,7 +47,7 @@
 
     <script>
         var connection = new Postmonger.Session();
-        var ready = false;
+        var initialized = false;
 
         function getActivityData() {
             return {
@@ -71,12 +71,11 @@
             };
         }
 
+        // Step 1 — JB calls initActivity after ready
         connection.on('initActivity', function(data) {
-            if (!ready) {
-                ready = true;
-                connection.trigger('ready');
-            }
-            // Restore previously saved values
+            initialized = true;
+
+            // Restore saved values if reopening
             try {
                 var args = data.arguments.execute.inArguments[0];
                 if (args.mobileNumber)  document.getElementById('mobileNumber').value  = args.mobileNumber;
@@ -85,12 +84,19 @@
                 if (args.source) {
                     var sel = document.getElementById('source');
                     for (var i = 0; i < sel.options.length; i++) {
-                        if (sel.options[i].value === args.source) { sel.selectedIndex = i; break; }
+                        if (sel.options[i].value === args.source) {
+                            sel.selectedIndex = i;
+                            break;
+                        }
                     }
                 }
             } catch(e) {}
+
+            // Step 2 — Tell JB we are ready after loading data
+            connection.trigger('ready');
         });
 
+        // Step 3 — JB sends clickedNext when Done is clicked
         connection.on('clickedNext', function() {
             connection.trigger('updateActivity', getActivityData());
         });
@@ -99,7 +105,7 @@
             connection.trigger('updateActivity', getActivityData());
         });
 
-        // Trigger ready on load
+        // Step 1 — Tell JB iframe has loaded
         connection.trigger('ready');
     </script>
 </body>
