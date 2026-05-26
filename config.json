@@ -1,40 +1,28 @@
 {
   "workflowApiVersion": "1.1",
-
   "metaData": {
     "category": "message",
     "icon": "https://cdn-icons-png.flaticon.com/512/724/724664.png",
     "isConfigured": true,
     "configOnDrop": true
   },
-
   "type": "REST",
-
   "lang": {
     "en-US": {
       "name": "SMS Logger",
       "description": "Logs SMS data into SendLogMasterSMS"
     }
   },
-
   "arguments": {
     "execute": {
       "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
-
       "verb": "POST",
-
       "format": "json",
-
       "useJwt": false,
-
       "timeout": 10000,
-
       "retryCount": 1,
-
       "retryDelay": 1000,
-
       "concurrentRequests": 6,
-
       "inArguments": [
         {
           "subscriberKey": "{{Event.SubscriberKey}}",
@@ -48,36 +36,20 @@
           "source": "Journey"
         }
       ],
-
       "outArguments": []
     }
   },
-
- "configurationArguments": {
-
-  "applicationExtensionKey": "0204a381-e266-453a-a749-fec9a0cdde30",
-
-  "save": {
-    "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv",
-    "useJwt": false
+  "configurationArguments": {
+    "applicationExtensionKey": "0204a381-e266-453a-a749-fec9a0cdde30",
+    "save":     { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
+    "publish":  { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
+    "validate": { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
+    "stop":     { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false }
   },
-
-  "publish": {
-    "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv",
-    "useJwt": false
-  },
-
-  "validate": {
-    "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv",
-    "useJwt": false
-  },
-
-  "stop": {
-    "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv",
-    "useJwt": false
-  }
-},
-
+  "save":      { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
+  "publish":   { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
+  "validate":  { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
+  "stop":      { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
   "userInterfaces": {
     "configModal": {
       "url": "https://namansaraswat7055.github.io/sms-logger/index.html",
@@ -86,59 +58,20 @@
       "fullscreen": false
     }
   },
-
   "schema": {
     "arguments": {
       "execute": {
         "inArguments": [
-          {
-            "subscriberKey": {
-              "dataType": "Text",
-              "direction": "in"
-            },
-
-            "mobileNumber": {
-              "dataType": "Text",
-              "direction": "in"
-            },
-
-            "leadId": {
-              "dataType": "Text",
-              "direction": "in"
-            },
-
-            "applicationId": {
-              "dataType": "Text",
-              "direction": "in"
-            },
-
-            "journeyId": {
-              "dataType": "Text",
-              "direction": "in"
-            },
-
-            "journeyVersion": {
-              "dataType": "Text",
-              "direction": "in"
-            },
-
-            "activityName": {
-              "dataType": "Text",
-              "direction": "in"
-            },
-
-            "messageKey": {
-              "dataType": "Text",
-              "direction": "in"
-            },
-
-            "source": {
-              "dataType": "Text",
-              "direction": "in"
-            }
-          }
+          { "subscriberKey":  { "dataType": "Text", "direction": "in" } },
+          { "mobileNumber":   { "dataType": "Text", "direction": "in" } },
+          { "leadId":         { "dataType": "Text", "direction": "in" } },
+          { "applicationId":  { "dataType": "Text", "direction": "in" } },
+          { "journeyId":      { "dataType": "Text", "direction": "in" } },
+          { "journeyVersion": { "dataType": "Text", "direction": "in" } },
+          { "activityName":   { "dataType": "Text", "direction": "in" } },
+          { "messageKey":     { "dataType": "Text", "direction": "in" } },
+          { "source":         { "dataType": "Text", "direction": "in" } }
         ],
-
         "outArguments": []
       }
     }
