@@ -19,6 +19,7 @@
       "verb": "POST",
       "format": "json",
       "useJwt": false,
+      "body": "",
       "timeout": 10000,
       "retryCount": 1,
       "retryDelay": 1000,
