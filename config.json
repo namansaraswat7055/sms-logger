@@ -25,10 +25,10 @@
       "concurrentRequests": 6,
       "inArguments": [
         {
-          "subscriberKey": "{{Contact.Key}}",
-          "mobileNumber": "TEST_HARDCODED_MOBILE",
-          "leadId": "TEST_LEAD",
-          "applicationId": "TEST_APP",
+          "subscriberKey": "{{Event.SubscriberKey}}",
+          "mobileNumber": "{{Event.MobileNumber}}",
+          "leadId": "{{Event.LeadId}}",
+          "applicationId": "{{Event.ApplicationId}}",
           "journeyId": "{{Context.InteractionId}}",
           "journeyVersion": "{{Context.InteractionVersionId}}",
           "activityName": "{{Context.ActivityId}}",
