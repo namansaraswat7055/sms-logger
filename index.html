@@ -163,7 +163,7 @@
 
         payload.metaData.isConfigured = true;
 
-        payload.arguments.execute.inArguments = [
+    payload.arguments.execute.inArguments = [
     {
         subscriberKey: '{{Contact.Key}}',
 
@@ -175,11 +175,7 @@
 
         journeyId: '{{Context.InteractionId}}',
 
-        journeyVersion: '{{Context.InteractionVersionNumber}}',
-
-        activityId: '{{Context.ActivityId}}',
-
-        activityInstanceId: '{{Context.ActivityInstanceId}}',
+        activityId: '{{Activity.Id}}',
 
         source: $('#source').val()
     }
