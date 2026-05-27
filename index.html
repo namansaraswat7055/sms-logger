@@ -164,18 +164,26 @@
         payload.metaData.isConfigured = true;
 
         payload.arguments.execute.inArguments = [
-            {
-                subscriberKey: '{{Contact.Key}}',
-                mobileNumber: $('#mobileNumber').val(),
-                leadId: $('#leadId').val(),
-                applicationId: $('#applicationId').val(),
-                journeyId: '{{Context.InteractionId}}',
-                journeyVersion: '{{Context.InteractionVersionId}}',
-                activityName: '{{Context.ActivityId}}',
-                messageKey: '{{Context.ActivityInstanceId}}',
-                source: $('#source').val()
-            }
-        ];
+    {
+        subscriberKey: '{{Contact.Key}}',
+
+        mobileNumber: $('#mobileNumber').val(),
+
+        leadId: $('#leadId').val(),
+
+        applicationId: $('#applicationId').val(),
+
+        journeyId: '{{Context.InteractionId}}',
+
+        journeyVersion: '{{Context.InteractionVersionNumber}}',
+
+        activityId: '{{Context.ActivityId}}',
+
+        activityInstanceId: '{{Context.ActivityInstanceId}}',
+
+        source: $('#source').val()
+    }
+];
 
         connection.trigger('updateActivity', payload);
     }
