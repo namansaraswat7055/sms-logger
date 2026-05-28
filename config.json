@@ -25,18 +25,16 @@
       "retryDelay": 1000,
       "concurrentRequests": 6,
       "inArguments": [
-        {
-          "subscriberKey": "{{Event.SubscriberKey}}",
-          "mobileNumber": "{{Event.MobileNumber}}",
-          "leadId": "{{Event.LeadId}}",
-          "applicationId": "{{Event.ApplicationId}}",
-          "journeyId": "{{Context.InteractionId}}",
-          "journeyVersion": "{{Context.InteractionVersionId}}",
-          "activityName": "{{Context.ActivityId}}",
-          "messageKey": "{{Context.ActivityInstanceId}}",
-          "source": "Journey"
-        }
-      ],
+  {
+    "subscriberKey": "{{Event.SubscriberKey}}",
+    "mobileNumber": "{{Event.MobileNumber}}",
+    "leadId": "{{Event.LeadId}}",
+    "applicationId": "{{Event.ApplicationId}}",
+    "journeyId": "{{Context.InteractionId}}",
+    "activityId": "{{Activity.Id}}",
+    "source": "Journey"
+  }
+]
       "outArguments": []
     }
   },
@@ -68,9 +66,7 @@
           { "leadId":         { "dataType": "Text", "direction": "in" } },
           { "applicationId":  { "dataType": "Text", "direction": "in" } },
           { "journeyId":      { "dataType": "Text", "direction": "in" } },
-          { "journeyVersion": { "dataType": "Text", "direction": "in" } },
-          { "activityName":   { "dataType": "Text", "direction": "in" } },
-          { "messageKey":     { "dataType": "Text", "direction": "in" } },
+          { "activityId": { "dataType": "Text", "direction": "in" } },
           { "source":         { "dataType": "Text", "direction": "in" } }
         ],
         "outArguments": []
