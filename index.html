@@ -152,9 +152,11 @@
 
         } catch (e) {
 
-            $('#mobileNumber').val('{{Event.MobileNumber}}');
-            $('#leadId').val('{{Event.LeadId}}');
-            $('#applicationId').val('{{Event.ApplicationId}}');
+           $('#mobileNumber').val('{{Contact.Attribute.SMS_Custom_DE.MobileNumber}}');
+
+$('#leadId').val('{{Contact.Attribute.SMS_Custom_DE.LeadId}}');
+
+$('#applicationId').val('{{Contact.Attribute.SMS_Custom_DE.ApplicationId}}');
             $('#source').val('Journey');
         }
     }
