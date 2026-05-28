@@ -34,7 +34,7 @@
 }
   },
   "configurationArguments": {
-    "applicationExtensionKey": "55b3ab12-67f8-450c-925c-56b5cc06f8ad",
+    "applicationExtensionKey": "37025370-a50c-4aac-97d8-ec44885ed38e",
     "save":     { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
     "publish":  { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
     "validate": { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
