@@ -26,7 +26,7 @@
       
       "inArguments": [
   {
-    "subscriberKey": "{{Event.SubscriberKey}}",
+    "subscriberKey": "{{Contact.Key}}",
     "mobileNumber": "{{Contact.Attribute.SMS_Custom_DE.MobileNumber}}",
     "leadId": "{{Contact.Attribute.SMS_Custom_DE.LeadId}}",
     "applicationId": "{{Contact.Attribute.SMS_Custom_DE.ApplicationId}}",
@@ -34,7 +34,7 @@
     "activityId": "{{Activity.Id}}",
     "source": "Journey"
   }
-]
+],
       "outArguments": []
     }
   },
