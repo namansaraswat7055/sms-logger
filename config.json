@@ -1,7 +1,7 @@
 {
   "workflowApiVersion": "1.1",
   "metaData": {
-    "category": "message",
+    "category": "custom",
     "icon": "https://cdn-icons-png.flaticon.com/512/724/724664.png",
     "isConfigured": true,
     "configOnDrop": true
@@ -19,17 +19,17 @@
       "verb": "POST",
       "format": "json",
       "useJwt": false,
-      "body": "",
+     
       "timeout": 10000,
       "retryCount": 1,
       "retryDelay": 1000,
-      "concurrentRequests": 6,
+      
       "inArguments": [
   {
     "subscriberKey": "{{Event.SubscriberKey}}",
-    "mobileNumber": "{{Event.MobileNumber}}",
-    "leadId": "{{Event.LeadId}}",
-    "applicationId": "{{Event.ApplicationId}}",
+    "mobileNumber": "{{Contact.Attribute.SMS_Custom_DE.MobileNumber}}",
+    "leadId": "{{Contact.Attribute.SMS_Custom_DE.LeadId}}",
+    "applicationId": "{{Contact.Attribute.SMS_Custom_DE.ApplicationId}}",
     "journeyId": "{{Context.InteractionId}}",
     "activityId": "{{Activity.Id}}",
     "source": "Journey"
