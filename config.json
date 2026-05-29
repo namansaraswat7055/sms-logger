@@ -26,11 +26,14 @@
       "subscriberKey": "{{Contact.Key}}",
       "mobileNumber": "{{Event.MobileNumber}}",
       "leadId": "{{Event.LeadId}}",
-      "applicationId": "{{Event.ApplicationId}}"
+      "applicationId": "{{Event.ApplicationId}}",
+      "journeyId": "{{Context.InteractionId}}",
+      "activityId": "{{Activity.Id}}",
+      "source": "Journey"
     }
   ],
 
-  "outArguments": [] 
+  "outArguments": []
 }
   },
   "configurationArguments": {
