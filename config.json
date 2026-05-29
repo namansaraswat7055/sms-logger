@@ -14,27 +14,23 @@
     }
   },
   "arguments": {
-  "execute": {
-  "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
-  "verb": "POST",
-  "format": "json",
-  "useJwt": false,
-  "timeout": 10000,
-
-  "inArguments": [
-    {
-      "subscriberKey": "{{Contact.Key}}",
-      "mobileNumber": "{{Event.MobileNumber}}",
-      "leadId": "{{Event.LeadId}}",
-      "applicationId": "{{Event.ApplicationId}}",
-      "journeyId": "{{Context.InteractionId}}",
-      "activityId": "{{Activity.Id}}",
-      "source": "Journey"
+    "execute": {
+      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
+      "verb": "POST",
+      "format": "json",
+      "useJwt": false,
+      "timeout": 10000,
+      "inArguments": [
+        { "subscriberKey":  "{{Contact.Key}}" },
+        { "mobileNumber":   "{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.MobileNumber}}" },
+        { "leadId":         "{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.LeadId}}" },
+        { "applicationId":  "{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.ApplicationId}}" },
+        { "journeyId":      "{{Context.InteractionId}}" },
+        { "activityId":     "{{Activity.Id}}" },
+        { "source":         "Journey" }
+      ],
+      "outArguments": []
     }
-  ],
-
-  "outArguments": []
-}
   },
   "configurationArguments": {
     "applicationExtensionKey": "37025370-a50c-4aac-97d8-ec44885ed38e",
@@ -43,10 +39,6 @@
     "validate": { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
     "stop":     { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false }
   },
-  "save":      { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
-  "publish":   { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
-  "validate":  { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
-  "stop":      { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
   "userInterfaces": {
     "configModal": {
       "url": "https://namansaraswat7055.github.io/sms-logger/index.html",
@@ -64,7 +56,7 @@
           { "leadId":         { "dataType": "Text", "direction": "in" } },
           { "applicationId":  { "dataType": "Text", "direction": "in" } },
           { "journeyId":      { "dataType": "Text", "direction": "in" } },
-          { "activityId": { "dataType": "Text", "direction": "in" } },
+          { "activityId":     { "dataType": "Text", "direction": "in" } },
           { "source":         { "dataType": "Text", "direction": "in" } }
         ],
         "outArguments": []
