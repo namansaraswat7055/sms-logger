@@ -3,17 +3,10 @@
 <head>
     <meta charset="utf-8">
     <title>SMS Logger</title>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/postmonger/postmonger.js"></script>
-
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
@@ -21,18 +14,13 @@
             background: #fff;
             font-size: 13px;
         }
-
         h3 {
             color: #2e7d32;
             margin-bottom: 16px;
             font-size: 15px;
             text-align: center;
         }
-
-        .field {
-            margin-bottom: 12px;
-        }
-
+        .field { margin-bottom: 12px; }
         label {
             display: block;
             font-weight: bold;
@@ -40,9 +28,7 @@
             color: #444;
             font-size: 12px;
         }
-
-        input,
-        select {
+        input, select {
             width: 100%;
             padding: 7px 10px;
             border: 1px solid #ccc;
@@ -51,13 +37,7 @@
             color: #333;
             background: #fff;
         }
-
-        .hint {
-            font-size: 11px;
-            color: #888;
-            margin-top: 3px;
-        }
-
+        .hint { font-size: 11px; color: #888; margin-top: 3px; }
         .badge {
             background: #e8f5e9;
             border: 1px solid #a5d6a7;
@@ -67,144 +47,197 @@
             color: #2e7d32;
             margin-left: 6px;
         }
+        .de-key-display {
+            font-size: 11px;
+            color: #1565c0;
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 4px;
+            padding: 4px 8px;
+            margin-bottom: 14px;
+            word-break: break-all;
+        }
+        .de-key-display span {
+            font-weight: bold;
+        }
     </style>
 </head>
-
 <body>
 
-<h3>
-    📱 SMS Logger
-    <span class="badge">Active</span>
-</h3>
+<h3>📱 SMS Logger <span class="badge">Active</span></h3>
 
-<div class="field">
-    <label>Mobile Number</label>
-    <input type="text" id="mobileNumber" />
-    <div class="hint">Journey attribute for mobile number</div>
+<!-- Shows detected Entry DE key to marketer -->
+<div class="de-key-display" id="deKeyDisplay" style="display:none;">
+    <span>Entry DE Key:</span> <span id="deKeyValue"></span>
 </div>
 
 <div class="field">
-    <label>Lead ID</label>
-    <input type="text" id="leadId" />
-    <div class="hint">Journey attribute for lead ID</div>
+    <label>Mobile Number Token</label>
+    <input type="text" id="mobileNumber" readonly />
+    <div class="hint">Auto-mapped from Entry DE</div>
 </div>
 
 <div class="field">
-    <label>Application ID</label>
-    <input type="text" id="applicationId" />
-    <div class="hint">Journey attribute for application ID</div>
+    <label>Lead ID Token</label>
+    <input type="text" id="leadId" readonly />
+    <div class="hint">Auto-mapped from Entry DE</div>
+</div>
+
+<div class="field">
+    <label>Application ID Token</label>
+    <input type="text" id="applicationId" readonly />
+    <div class="hint">Auto-mapped from Entry DE</div>
 </div>
 
 <div class="field">
     <label>Source</label>
-
     <select id="source">
         <option value="Journey">Journey</option>
         <option value="API">API</option>
         <option value="Manual">Manual</option>
         <option value="Campaign">Campaign</option>
     </select>
-
-    <div class="hint">
-        Source identifier for this log entry
-    </div>
+    <div class="hint">Source identifier for this log entry</div>
 </div>
 
 <script>
 
-    var connection = new Postmonger.Session();
-    var payload = {};
+    var connection    = new Postmonger.Session();
+    var payload       = {};
+    var entryDeKey    = '';   // will be set dynamically
+    var activityReady = false;
 
+    // ── boot ──────────────────────────────────────────────────
     $(window).ready(function () {
+        connection.on('initActivity',    onInitActivity);
+        connection.on('clickedNext',     onSave);
 
-        connection.on('initActivity', initialize);
-
-        connection.on('clickedNext', save);
+        // This is the key event — JB returns entry event schema
+        connection.on('requestedTokens', onTokensReceived);
 
         connection.trigger('ready');
     });
 
-    function initialize(data) {
+    // ── Step 1: JB sends activity payload ────────────────────
+    function onInitActivity(data) {
 
-    if (data) {
-        payload = data;
-    }
+        if (data) { payload = data; }
 
-    var args = {};
+        // Check if we already saved the DE key in a previous session
+        var savedArgs = extractArgs(payload);
 
-    try {
+        if (savedArgs.entryDeKey && savedArgs.entryDeKey !== '') {
 
-        if (
-            payload.arguments &&
-            payload.arguments.execute &&
-            payload.arguments.execute.inArguments
-        ) {
+            // Returning to a saved activity — restore from saved state
+            entryDeKey = savedArgs.entryDeKey;
+            applyTokens(entryDeKey);
+            $('#source').val(savedArgs.source || 'Journey');
 
-            payload.arguments.execute.inArguments.forEach(function(obj) {
+        } else {
 
-                var key = Object.keys(obj)[0];
-
-                args[key] = obj[key];
-            });
+            // Fresh drop — request tokens from Journey Builder
+            connection.trigger('requestTokens');
         }
-
-        $('#mobileNumber').val(
-            args.mobileNumber ||
-            '{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.MobileNumber}}'
-        );
-
-        $('#leadId').val(
-            args.leadId ||
-            '{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.LeadId}}'
-        );
-
-        $('#applicationId').val(
-            args.applicationId ||
-            '{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.ApplicationId}}'
-        );
-
-        $('#source').val(
-            args.source || 'Journey'
-        );
-
-    } catch (e) {
-
-        $('#mobileNumber').val('{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.MobileNumber}}');
-
-        $('#leadId').val('{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.LeadId}}');
-
-        $('#applicationId').val('{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.ApplicationId}}');
-
-        $('#source').val('Journey');
     }
-}
 
-   function save() {
+    // ── Step 2: JB responds with token/schema data ────────────
+    function onTokensReceived(tokens) {
 
-    payload.metaData.isConfigured = true;
+        try {
+            // tokens object contains entry event schema
+            // structure: tokens.schema or tokens.tokenGroups
+            var schema = tokens && (tokens.schema || tokens.tokenGroups);
 
-    payload.arguments.execute.inArguments = [
+            if (schema && schema.length > 0) {
 
-        { "subscriberKey": "{{Contact.Key}}" },
+                // First schema group is always the Entry Event
+                var entryEvent = schema[0];
 
-        { "mobileNumber": $('#mobileNumber').val() },
+                // key is either eventDefinitionKey or key depending on JB version
+                entryDeKey = entryEvent.eventDefinitionKey
+                          || entryEvent.key
+                          || entryEvent.id
+                          || '';
 
-        { "leadId": $('#leadId').val() },
+                if (entryDeKey !== '') {
+                    applyTokens(entryDeKey);
+                    return;
+                }
+            }
+        } catch(e) {}
 
-        { "applicationId": $('#applicationId').val() },
+        // Fallback — show manual input if token request failed
+        enableManualInput();
+    }
 
-        { "journeyId": "{{Context.InteractionId}}" },
+    // ── Apply tokens once DE key is known ─────────────────────
+    function applyTokens(deKey) {
 
-        { "activityId": "{{Activity.Id}}" },
+        var mobile = '{{Event.' + deKey + '.MobileNumber}}';
+        var lead   = '{{Event.' + deKey + '.LeadId}}';
+        var app    = '{{Event.' + deKey + '.ApplicationId}}';
 
-        { "source": $('#source').val() }
+        $('#mobileNumber').val(mobile);
+        $('#leadId').val(lead);
+        $('#applicationId').val(app);
 
-    ];
+        // Show the detected key to marketer for visibility
+        $('#deKeyValue').text(deKey);
+        $('#deKeyDisplay').show();
+    }
 
-    connection.trigger('updateActivity', payload);
-}
+    // ── Fallback: let marketer type manually ──────────────────
+    function enableManualInput() {
+        $('#mobileNumber').removeAttr('readonly')
+            .attr('placeholder', 'e.g. {{Event.YOUR-DE-KEY.MobileNumber}}');
+        $('#leadId').removeAttr('readonly')
+            .attr('placeholder', 'e.g. {{Event.YOUR-DE-KEY.LeadId}}');
+        $('#applicationId').removeAttr('readonly')
+            .attr('placeholder', 'e.g. {{Event.YOUR-DE-KEY.ApplicationId}}');
+
+        $('#deKeyDisplay').css('background','#fff3e0')
+            .css('border-color','#ffb74d').show();
+        $('#deKeyValue').text('Could not detect — please type tokens manually');
+    }
+
+    // ── Save: marketer clicks Done ────────────────────────────
+    function onSave() {
+
+        payload.metaData.isConfigured = true;
+
+        // Save entryDeKey so we can restore it next time modal opens
+        payload.arguments.execute.inArguments = [
+            { "subscriberKey":  "{{Contact.Key}}" },
+            { "mobileNumber":   $('#mobileNumber').val() },
+            { "leadId":         $('#leadId').val() },
+            { "applicationId":  $('#applicationId').val() },
+            { "journeyId":      "{{Context.InteractionId}}" },
+            { "activityId":     "{{Activity.Id}}" },
+            { "source":         $('#source').val() },
+            { "entryDeKey":     entryDeKey }   // persist for re-open
+        ];
+
+        connection.trigger('updateActivity', payload);
+    }
+
+    // ── Helper: extract saved args from payload ───────────────
+    function extractArgs(pl) {
+        var args = {};
+        try {
+            if (
+                pl.arguments &&
+                pl.arguments.execute &&
+                pl.arguments.execute.inArguments
+            ) {
+                pl.arguments.execute.inArguments.forEach(function(obj) {
+                    var key = Object.keys(obj)[0];
+                    args[key] = obj[key];
+                });
+            }
+        } catch(e) {}
+        return args;
+    }
 
 </script>
-
 </body>
 </html>
