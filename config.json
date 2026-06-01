@@ -14,17 +14,24 @@
     }
   },
   "arguments": {
-  "execute": {
-  "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
-  "verb": "POST",
-  "format": "json",
-  "useJwt": false,
-  "timeout": 10000,
-
-  "inArguments": [],
-
-  "outArguments": []
-}
+    "execute": {
+      "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
+      "verb": "POST",
+      "format": "json",
+      "useJwt": false,
+      "timeout": 10000,
+      "inArguments": [
+        { "subscriberKey":  "{{Contact.Key}}" },
+        { "mobileNumber":   "" },
+        { "leadId":         "" },
+        { "applicationId":  "" },
+        { "journeyId":      "{{Context.InteractionId}}" },
+        { "activityId":     "{{Activity.Id}}" },
+        { "source":         "Journey" },
+        { "entryDeKey":     "" }
+      ],
+      "outArguments": []
+    }
   },
   "configurationArguments": {
     "applicationExtensionKey": "37025370-a50c-4aac-97d8-ec44885ed38e",
@@ -33,10 +40,6 @@
     "validate": { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
     "stop":     { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false }
   },
-  "save":      { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
-  "publish":   { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
-  "validate":  { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
-  "stop":      { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
   "userInterfaces": {
     "configModal": {
       "url": "https://namansaraswat7055.github.io/sms-logger/index.html",
@@ -54,8 +57,9 @@
           { "leadId":         { "dataType": "Text", "direction": "in" } },
           { "applicationId":  { "dataType": "Text", "direction": "in" } },
           { "journeyId":      { "dataType": "Text", "direction": "in" } },
-          { "activityId": { "dataType": "Text", "direction": "in" } },
-          { "source":         { "dataType": "Text", "direction": "in" } }
+          { "activityId":     { "dataType": "Text", "direction": "in" } },
+          { "source":         { "dataType": "Text", "direction": "in" } },
+          { "entryDeKey":     { "dataType": "Text", "direction": "in" } }
         ],
         "outArguments": []
       }
