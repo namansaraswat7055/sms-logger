@@ -132,48 +132,52 @@
 
     var args = {};
 
-    if (
-        payload.arguments &&
-        payload.arguments.execute &&
-        payload.arguments.execute.inArguments
-    ) {
+    try {
 
-        payload.arguments.execute.inArguments.forEach(function(obj) {
+        if (
+            payload.arguments &&
+            payload.arguments.execute &&
+            payload.arguments.execute.inArguments
+        ) {
 
-            var key = Object.keys(obj)[0];
+            payload.arguments.execute.inArguments.forEach(function(obj) {
 
-            args[key] = obj[key];
-        });
-    }
+                var key = Object.keys(obj)[0];
 
-    $('#mobileNumber').val(
-        args.mobileNumber ||
-        '{{Event.SMS_Custom_DE.MobileNumber}}'
-    );
-
-    $('#leadId').val(
-        args.leadId ||
-        '{{Event.SMS_Custom_DE.LeadId}}'
-    );
-
-    $('#applicationId').val(
-        args.applicationId ||
-        '{{Event.SMS_Custom_DE.ApplicationId}}'
-    );
-
-    $('#source').val(
-        args.source || 'Journey'
-    );
-}catch (e) {
-
-           $('#mobileNumber').val('{{Contact.Attribute.SMS_Custom_DE.MobileNumber}}');
-
-$('#leadId').val('{{Contact.Attribute.SMS_Custom_DE.LeadId}}');
-
-$('#applicationId').val('{{Contact.Attribute.SMS_Custom_DE.ApplicationId}}');
-            $('#source').val('Journey');
+                args[key] = obj[key];
+            });
         }
+
+        $('#mobileNumber').val(
+            args.mobileNumber ||
+            '{{Event.SMS_Custom_DE.MobileNumber}}'
+        );
+
+        $('#leadId').val(
+            args.leadId ||
+            '{{Event.SMS_Custom_DE.LeadId}}'
+        );
+
+        $('#applicationId').val(
+            args.applicationId ||
+            '{{Event.SMS_Custom_DE.ApplicationId}}'
+        );
+
+        $('#source').val(
+            args.source || 'Journey'
+        );
+
+    } catch (e) {
+
+        $('#mobileNumber').val('{{Event.SMS_Custom_DE.MobileNumber}}');
+
+        $('#leadId').val('{{Event.SMS_Custom_DE.LeadId}}');
+
+        $('#applicationId').val('{{Event.SMS_Custom_DE.ApplicationId}}');
+
+        $('#source').val('Journey');
     }
+}
 
    function save() {
 
