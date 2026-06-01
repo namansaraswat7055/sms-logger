@@ -150,17 +150,17 @@
 
         $('#mobileNumber').val(
             args.mobileNumber ||
-            '{{Event.SMS_Custom_DE.MobileNumber}}'
+            '{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.MobileNumber}}'
         );
 
         $('#leadId').val(
             args.leadId ||
-            '{{Event.SMS_Custom_DE.LeadId}}'
+            '{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.LeadId}}'
         );
 
         $('#applicationId').val(
             args.applicationId ||
-            '{{Event.SMS_Custom_DE.ApplicationId}}'
+            '{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.ApplicationId}}'
         );
 
         $('#source').val(
@@ -169,11 +169,11 @@
 
     } catch (e) {
 
-        $('#mobileNumber').val('{{Event.SMS_Custom_DE.MobileNumber}}');
+        $('#mobileNumber').val('{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.MobileNumber}}');
 
-        $('#leadId').val('{{Event.SMS_Custom_DE.LeadId}}');
+        $('#leadId').val('{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.LeadId}}');
 
-        $('#applicationId').val('{{Event.SMS_Custom_DE.ApplicationId}}');
+        $('#applicationId').val('{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.ApplicationId}}');
 
         $('#source').val('Journey');
     }
