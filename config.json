@@ -21,15 +21,7 @@
   "useJwt": false,
   "timeout": 10000,
 
-  "inArguments": [
-  { "subscriberKey": "{{Contact.Key}}" },
-  { "mobileNumber": "{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.MobileNumber}}" },
-  { "leadId": "{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.LeadId}}" },
-  { "applicationId": "{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.ApplicationId}}" },
-  { "journeyId": "{{Context.InteractionId}}" },
-  { "activityId": "{{Activity.Id}}" },
-  { "source": "Journey" }
-],
+  "inArguments": [],
 
   "outArguments": []
 }
