@@ -58,7 +58,7 @@
       "execute": {
         "inArguments": [
           { "subscriberKey":  { "dataType": "Text", "direction": "in" } },
-          { "mobileNumber":   { "dataType": "Text", "direction": "in" } },
+          { "mobileNumber":   { "dataType": "Phone", "direction": "in" } },
           { "leadId":         { "dataType": "Text", "direction": "in" } },
           { "applicationId":  { "dataType": "Text", "direction": "in" } },
           { "journeyId":      { "dataType": "Text", "direction": "in" } },
