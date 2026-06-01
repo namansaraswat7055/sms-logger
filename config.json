@@ -22,16 +22,14 @@
   "timeout": 10000,
 
   "inArguments": [
-    {
-      "subscriberKey": "{{Contact.Key}}",
-      "mobileNumber": "{{Event.MobileNumber}}",
-      "leadId": "{{Event.LeadId}}",
-      "applicationId": "{{Event.ApplicationId}}",
-      "journeyId": "{{Context.InteractionId}}",
-      "activityId": "{{Activity.Id}}",
-      "source": "Journey"
-    }
-  ],
+  { "subscriberKey": "{{Contact.Key}}" },
+  { "mobileNumber": "{{Event.SMS_Custom_DE.MobileNumber}}" },
+  { "leadId": "{{Event.SMS_Custom_DE.LeadId}}" },
+  { "applicationId": "{{Event.SMS_Custom_DE.ApplicationId}}" },
+  { "journeyId": "{{Context.InteractionId}}" },
+  { "activityId": "{{Activity.Id}}" },
+  { "source": "Journey" }
+],
 
   "outArguments": []
 }
