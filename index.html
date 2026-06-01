@@ -126,31 +126,45 @@
 
     function initialize(data) {
 
-        if (data) {
-            payload = data;
-        }
+    if (data) {
+        payload = data;
+    }
 
-        try {
+    var args = {};
 
-            var args = payload.arguments.execute.inArguments[0];
+    if (
+        payload.arguments &&
+        payload.arguments.execute &&
+        payload.arguments.execute.inArguments
+    ) {
 
-            $('#mobileNumber').val(
-                args.mobileNumber || '{{Event.MobileNumber}}'
-            );
+        payload.arguments.execute.inArguments.forEach(function(obj) {
 
-            $('#leadId').val(
-                args.leadId || '{{Event.LeadId}}'
-            );
+            var key = Object.keys(obj)[0];
 
-            $('#applicationId').val(
-                args.applicationId || '{{Event.ApplicationId}}'
-            );
+            args[key] = obj[key];
+        });
+    }
 
-            $('#source').val(
-                args.source || 'Journey'
-            );
+    $('#mobileNumber').val(
+        args.mobileNumber ||
+        '{{Event.SMS_Custom_DE.MobileNumber}}'
+    );
 
-        } catch (e) {
+    $('#leadId').val(
+        args.leadId ||
+        '{{Event.SMS_Custom_DE.LeadId}}'
+    );
+
+    $('#applicationId').val(
+        args.applicationId ||
+        '{{Event.SMS_Custom_DE.ApplicationId}}'
+    );
+
+    $('#source').val(
+        args.source || 'Journey'
+    );
+}catch (e) {
 
            $('#mobileNumber').val('{{Contact.Attribute.SMS_Custom_DE.MobileNumber}}');
 
@@ -161,30 +175,30 @@ $('#applicationId').val('{{Contact.Attribute.SMS_Custom_DE.ApplicationId}}');
         }
     }
 
-    function save() {
+   function save() {
 
-        payload.metaData.isConfigured = true;
+    payload.metaData.isConfigured = true;
 
     payload.arguments.execute.inArguments = [
-    {
-        subscriberKey: '{{Contact.Key}}',
 
-        mobileNumber: $('#mobileNumber').val(),
+        { "subscriberKey": "{{Contact.Key}}" },
 
-        leadId: $('#leadId').val(),
+        { "mobileNumber": $('#mobileNumber').val() },
 
-        applicationId: $('#applicationId').val(),
+        { "leadId": $('#leadId').val() },
 
-        journeyId: '{{Context.InteractionId}}',
+        { "applicationId": $('#applicationId').val() },
 
-        activityId: '{{Activity.Id}}',
+        { "journeyId": "{{Context.InteractionId}}" },
 
-        source: $('#source').val()
-    }
-];
+        { "activityId": "{{Activity.Id}}" },
 
-        connection.trigger('updateActivity', payload);
-    }
+        { "source": $('#source').val() }
+
+    ];
+
+    connection.trigger('updateActivity', payload);
+}
 
 </script>
 
