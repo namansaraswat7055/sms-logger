@@ -185,24 +185,29 @@
     }
 
     // ── Save: marketer clicks Done ────────────────────────────
-    function onSave() {
+function onSave() {
+    payload.metaData.isConfigured = true;
 
-        payload.metaData.isConfigured = true;
+    // Use known DE key as fallback if auto-detection failed
+    var deKey = entryDeKey || 'B405B07A-6C45-4AD6-8F3F-887A4BE96782';
 
-        // Save entryDeKey so we can restore it next time modal opens
-        payload.arguments.execute.inArguments = [
-            { "subscriberKey":  "{{ContactKey}}" },
-            { "mobileNumber":   $('#mobileNumber').val() },
-            { "leadId":         $('#leadId').val() },
-            { "applicationId":  $('#applicationId').val() },
-            { "journeyId":      "{{Interaction.InteractionId}}" },
-            { "activityId":     "{{Activity.Id}}" },
-            { "source":         $('#source').val() },
-            { "entryDeKey":     entryDeKey }   // persist for re-open
-        ];
+    var mobile = $('#mobileNumber').val() || '{{Event.' + deKey + '.MobileNumber}}';
+    var lead   = $('#leadId').val()       || '{{Event.' + deKey + '.LeadId}}';
+    var app    = $('#applicationId').val()|| '{{Event.' + deKey + '.ApplicationId}}';
 
-        connection.trigger('updateActivity', payload);
-    }
+    payload.arguments.execute.inArguments = [
+        { "subscriberKey":  "{{Contact.Key}}" },
+        { "mobileNumber":   mobile },
+        { "leadId":         lead },
+        { "applicationId":  app },
+        { "journeyId":      "{{Interaction.InteractionId}}" },
+        { "activityId":     "{{Activity.Id}}" },
+        { "source":         $('#source').val() },
+        { "entryDeKey":     deKey }
+    ];
+
+    connection.trigger('updateActivity', payload);
+}
 
     // ── Helper: extract saved args from payload ───────────────
     function extractArgs(pl) {
