@@ -3,7 +3,7 @@
   "metaData": {
     "category": "message",
     "icon": "https://cdn-icons-png.flaticon.com/512/724/724664.png",
-    "isConfigured": true,
+    
     "configOnDrop": true
   },
   "type": "REST",
@@ -18,7 +18,6 @@
       "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/g5wzzj3iilu",
       "verb": "POST",
       "format": "json",
-      "useJwt": false,
       "timeout": 10000,
       "inArguments": [
         { "subscriberKey":  "{{Contact.Key}}" },
@@ -35,10 +34,10 @@
   },
   "configurationArguments": {
     "applicationExtensionKey": "37025370-a50c-4aac-97d8-ec44885ed38e",
-    "save":     { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
-    "publish":  { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
-    "validate": { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false },
-    "stop":     { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv", "useJwt": false }
+    "save":     { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv"},
+    "publish":  { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv"},
+    "validate": { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv"},
+    "stop":     { "url": "https://mczklys7qkb4rf8qkq-dpww0j3-8.pub.sfmc-content.com/io43ocrjovv"}
   },
   "userInterfaces": {
     "configModal": {
