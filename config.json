@@ -24,7 +24,7 @@
         { "mobileNumber":   "" },
         { "leadId":         "" },
         { "applicationId":  "" },
-        { "journeyId":      "{{Context.InteractionId}}" },
+        { "journeyId":      "{{Interaction.InteractionId}}" },
         { "activityId":     "{{Activity.Id}}" },
         { "source":         "Journey" },
         { "entryDeKey":     "" }
