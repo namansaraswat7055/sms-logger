@@ -113,7 +113,7 @@
         connection.on('clickedNext',     onSave);
 
         // This is the key event — JB returns entry event schema
-        connection.on('requestedTokens', onTokensReceived);
+        connection.on('requestedTriggerEventDefinition', onTriggerEventReceived);
 
         connection.trigger('ready');
     });
@@ -136,39 +136,23 @@
         } else {
 
             // Fresh drop — request tokens from Journey Builder
-            connection.trigger('requestTokens');
+            connection.trigger('requestTriggerEventDefinition');
         }
     }
 
     // ── Step 2: JB responds with token/schema data ────────────
-    function onTokensReceived(tokens) {
-
-        try {
-            // tokens object contains entry event schema
-            // structure: tokens.schema or tokens.tokenGroups
-            var schema = tokens && (tokens.schema || tokens.tokenGroups);
-
-            if (schema && schema.length > 0) {
-
-                // First schema group is always the Entry Event
-                var entryEvent = schema[0];
-
-                // key is either eventDefinitionKey or key depending on JB version
-                entryDeKey = entryEvent.eventDefinitionKey
-                          || entryEvent.key
-                          || entryEvent.id
-                          || '';
-
-                if (entryDeKey !== '') {
-                    applyTokens(entryDeKey);
-                    return;
-                }
+    function onTriggerEventReceived(eventDef) {
+    try {
+        if (eventDef && (eventDef.id || eventDef.key)) {
+            entryDeKey = eventDef.key || eventDef.id || '';
+            if (entryDeKey !== '') {
+                applyTokens(entryDeKey);
+                return;
             }
-        } catch(e) {}
-
-        // Fallback — show manual input if token request failed
-        enableManualInput();
-    }
+        }
+    } catch(e) {}
+    enableManualInput();
+}
 
     // ── Apply tokens once DE key is known ─────────────────────
     function applyTokens(deKey) {
