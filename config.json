@@ -20,7 +20,7 @@
       "format": "json",
       "timeout": 10000,
       "inArguments": [
-        { "subscriberKey":  "{{Contact.Key}}" },
+        { "subscriberKey":  "{{ContactKey}}" },
         { "mobileNumber":   "" },
         { "leadId":         "" },
         { "applicationId":  "" },
