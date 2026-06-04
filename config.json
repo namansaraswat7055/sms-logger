@@ -61,6 +61,7 @@
           { "leadId":         { "dataType": "Text", "direction": "in" } },
           { "applicationId":  { "dataType": "Text", "direction": "in" } },
           { "journeyId":      { "dataType": "Text", "direction": "in" } },
+          { "journeyVersion":      { "dataType": "Text", "direction": "in" } },
           
    
           { "activityId":     { "dataType": "Text", "direction": "in" } },
