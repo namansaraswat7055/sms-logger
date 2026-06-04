@@ -64,7 +64,7 @@
 </head>
 <body>
 
-<h3>📱 SMS Logger - ALL <span class="badge">Active</span></h3>
+<h3>📱 SMS Logger - ALL DATA <span class="badge">Active</span></h3>
 
 <!-- Shows detected Entry DE key to marketer -->
 <div class="de-key-display" id="deKeyDisplay" style="display:none;">
@@ -200,8 +200,8 @@ function onSave() {
         { "mobileNumber":   mobile },
         { "leadId":         lead },
         { "applicationId":  app },
-        { "journeyId":      "{{Context.InteractionId}}" },
-        { "journeyVersion": "{{Context.InteractionVersionId}}" },
+        { "journeyId":      "{{Interaction.InteractionId}}" },
+        { "journeyVersion": "{{Interaction.InteractionVersionId}}" },
         { "activityId":     "{{Activity.Id}}" },
         { "source":         $('#source').val() },
         { "entryDeKey":     deKey }
