@@ -27,6 +27,9 @@
     { "journeyId":      "{{Interaction.InteractionId}}" },
     { "activityId":     "{{Activity.Id}}" },
         { "activityName":    "{{Activity.Name}}" },
+        { "messageKey": "{{Activity.CustomerKey}}" },
+  { "messageId": "{{Activity.ObjectID}}" },
+
  
     { "source":         "Journey" },
     { "entryDeKey":     "B405B07A-6C45-4AD6-8F3F-887A4BE96782" }
@@ -59,6 +62,8 @@
           { "applicationId":  { "dataType": "Text", "direction": "in" } },
           { "journeyId":      { "dataType": "Text", "direction": "in" } },
           { "activityName":    { "dataType": "Text", "direction": "in" } },
+          { "messageKey":      { "dataType": "Text", "direction": "in" } },
+          { "messageId":       { "dataType": "Text", "direction": "in" } },
           { "activityId":     { "dataType": "Text", "direction": "in" } },
           { "source":         { "dataType": "Text", "direction": "in" } },
           { "entryDeKey":     { "dataType": "Text", "direction": "in" } }
