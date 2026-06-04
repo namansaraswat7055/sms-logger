@@ -25,8 +25,9 @@
     { "leadId":         "{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.LeadId}}" },
     { "applicationId":  "{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.ApplicationId}}" },
     { "journeyId":      "{{Interaction.InteractionId}}" },
+         { "journeyVersion":      "{{Interaction.Version}}" },
     { "activityId":     "{{ActivityId}}" },
-        { "activityName":    "{{ActivityName}}" },
+        
        
 
  
@@ -60,7 +61,7 @@
           { "leadId":         { "dataType": "Text", "direction": "in" } },
           { "applicationId":  { "dataType": "Text", "direction": "in" } },
           { "journeyId":      { "dataType": "Text", "direction": "in" } },
-          { "activityName":    { "dataType": "Text", "direction": "in" } },
+          
    
           { "activityId":     { "dataType": "Text", "direction": "in" } },
           { "source":         { "dataType": "Text", "direction": "in" } },
