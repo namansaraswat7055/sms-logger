@@ -58,7 +58,7 @@
           { "leadId":         { "dataType": "Text", "direction": "in" } },
           { "applicationId":  { "dataType": "Text", "direction": "in" } },
           { "journeyId":      { "dataType": "Text", "direction": "in" } },
-           "activityName":    { "dataType": "Text", "direction": "in" } },
+          { "activityName":    { "dataType": "Text", "direction": "in" } },
           { "activityId":     { "dataType": "Text", "direction": "in" } },
           { "source":         { "dataType": "Text", "direction": "in" } },
           { "entryDeKey":     { "dataType": "Text", "direction": "in" } }
