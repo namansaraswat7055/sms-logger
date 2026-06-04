@@ -201,7 +201,10 @@ function onSave() {
         { "leadId":         lead },
         { "applicationId":  app },
         { "journeyId":      "{{Interaction.InteractionId}}" },
+        { "journeyVersion": "{{Interaction.Version}}" },
+
         { "activityId":     "{{Activity.Id}}" },
+        { "activityName":   "{{Activity.Name}}" },
         { "source":         $('#source').val() },
         { "entryDeKey":     deKey }
     ];
