@@ -3,7 +3,6 @@
   "metaData": {
     "category": "message",
     "icon": "https://cdn-icons-png.flaticon.com/512/724/724664.png",
-    
     "configOnDrop": true
   },
   "type": "REST",
@@ -20,19 +19,10 @@
       "format": "json",
       "timeout": 10000,
       "inArguments": [
-        { "subscriberKey":  "{{ContactKey}}" },
-        { "mobileNumber":   "{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.MobileNumber}}" },
-    { "leadId":         "{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.LeadId}}" },
-    { "applicationId":  "{{Event.B405B07A-6C45-4AD6-8F3F-887A4BE96782.ApplicationId}}" },
-    { "journeyId":      "{{Interaction.InteractionId}}" },
-         { "journeyVersion":      "{{Interaction.InteractionVersionId}}" },
-    { "activityId":     "{{ActivityId}}" },
-        
-       
-
- 
-    { "source":         "Journey" },
-    { "entryDeKey":     "B405B07A-6C45-4AD6-8F3F-887A4BE96782" }
+        { "subscriberKey":  "{{Contact.Key}}" },
+        { "mobileNumber":   "" },
+        { "leadId":         "" },
+        { "applicationId":  "" }
       ],
       "outArguments": []
     }
@@ -59,14 +49,7 @@
           { "subscriberKey":  { "dataType": "Text", "direction": "in" } },
           { "mobileNumber":   { "dataType": "Phone", "direction": "in" } },
           { "leadId":         { "dataType": "Text", "direction": "in" } },
-          { "applicationId":  { "dataType": "Text", "direction": "in" } },
-          { "journeyId":      { "dataType": "Text", "direction": "in" } },
-          { "journeyVersion":      { "dataType": "Text", "direction": "in" } },
-          
-   
-          { "activityId":     { "dataType": "Text", "direction": "in" } },
-          { "source":         { "dataType": "Text", "direction": "in" } },
-          { "entryDeKey":     { "dataType": "Text", "direction": "in" } }
+          { "applicationId":  { "dataType": "Text", "direction": "in" } }
         ],
         "outArguments": []
       }
