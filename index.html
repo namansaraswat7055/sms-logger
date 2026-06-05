@@ -28,7 +28,7 @@
             color: #444;
             font-size: 12px;
         }
-        input, select {
+        input {
             width: 100%;
             padding: 7px 10px;
             border: 1px solid #ccc;
@@ -57,14 +57,12 @@
             margin-bottom: 14px;
             word-break: break-all;
         }
-        .de-key-display span {
-            font-weight: bold;
-        }
+        .de-key-display span { font-weight: bold; }
     </style>
 </head>
 <body>
 
-<h3>📱 SMS Logger - ALL DATA <span class="badge">Active</span></h3>
+<h3>📱 SMS Logger <span class="badge">Active</span></h3>
 
 <!-- Shows detected Entry DE key to marketer -->
 <div class="de-key-display" id="deKeyDisplay" style="display:none;">
@@ -89,32 +87,17 @@
     <div class="hint">Auto-mapped from Entry DE</div>
 </div>
 
-<div class="field">
-    <label>Source</label>
-    <select id="source">
-        <option value="Journey">Journey</option>
-        <option value="API">API</option>
-        <option value="Manual">Manual</option>
-        <option value="Campaign">Campaign</option>
-    </select>
-    <div class="hint">Source identifier for this log entry</div>
-</div>
-
 <script>
 
-    var connection    = new Postmonger.Session();
-    var payload       = {};
-    var entryDeKey    = '';   // will be set dynamically
-    var activityReady = false;
+    var connection = new Postmonger.Session();
+    var payload    = {};
+    var entryDeKey = '';   // resolved dynamically from JB — never hardcoded
 
     // ── boot ──────────────────────────────────────────────────
     $(window).ready(function () {
-        connection.on('initActivity',    onInitActivity);
-        connection.on('clickedNext',     onSave);
-
-        // This is the key event — JB returns entry event schema
+        connection.on('initActivity', onInitActivity);
+        connection.on('clickedNext',  onSave);
         connection.on('requestedTriggerEventDefinition', onTriggerEventReceived);
-
         connection.trigger('ready');
     });
 
@@ -123,54 +106,48 @@
 
         if (data) { payload = data; }
 
-        // Check if we already saved the DE key in a previous session
         var savedArgs = extractArgs(payload);
 
-        if (savedArgs.entryDeKey && savedArgs.entryDeKey !== '') {
+        if (savedArgs.mobileNumber && savedArgs.mobileNumber !== '') {
 
-            // Returning to a saved activity — restore from saved state
-            entryDeKey = savedArgs.entryDeKey;
-            applyTokens(entryDeKey);
-            $('#source').val(savedArgs.source || 'Journey');
+            // Returning to a saved activity — restore the persisted tokens
+            $('#mobileNumber').val(savedArgs.mobileNumber);
+            $('#leadId').val(savedArgs.leadId || '');
+            $('#applicationId').val(savedArgs.applicationId || '');
+            $('#deKeyValue').text('Restored from saved configuration');
+            $('#deKeyDisplay').show();
 
         } else {
 
-            // Fresh drop — request tokens from Journey Builder
+            // Fresh drop — request the entry event schema from JB
             connection.trigger('requestTriggerEventDefinition');
         }
     }
 
-    // ── Step 2: JB responds with token/schema data ────────────
+    // ── Step 2: JB responds with the entry event definition ───
     function onTriggerEventReceived(eventDef) {
-    try {
-        if (eventDef && (eventDef.id || eventDef.key)) {
-            entryDeKey = eventDef.key || eventDef.id || '';
-            if (entryDeKey !== '') {
-                applyTokens(entryDeKey);
-                return;
+        try {
+            if (eventDef && (eventDef.id || eventDef.key)) {
+                entryDeKey = eventDef.key || eventDef.id || '';
+                if (entryDeKey !== '') {
+                    applyTokens(entryDeKey);
+                    return;
+                }
             }
-        }
-    } catch(e) {}
-    enableManualInput();
-}
+        } catch(e) {}
+        enableManualInput();
+    }
 
-    // ── Apply tokens once DE key is known ─────────────────────
+    // ── Build tokens from the detected DE key ─────────────────
     function applyTokens(deKey) {
-
-        var mobile = '{{Event.' + deKey + '.MobileNumber}}';
-        var lead   = '{{Event.' + deKey + '.LeadId}}';
-        var app    = '{{Event.' + deKey + '.ApplicationId}}';
-
-        $('#mobileNumber').val(mobile);
-        $('#leadId').val(lead);
-        $('#applicationId').val(app);
-
-        // Show the detected key to marketer for visibility
+        $('#mobileNumber').val('{{Event.' + deKey + '.MobileNumber}}');
+        $('#leadId').val('{{Event.' + deKey + '.LeadId}}');
+        $('#applicationId').val('{{Event.' + deKey + '.ApplicationId}}');
         $('#deKeyValue').text(deKey);
         $('#deKeyDisplay').show();
     }
 
-    // ── Fallback: let marketer type manually ──────────────────
+    // ── Fallback: let the marketer type tokens manually ───────
     function enableManualInput() {
         $('#mobileNumber').removeAttr('readonly')
             .attr('placeholder', 'e.g. {{Event.YOUR-DE-KEY.MobileNumber}}');
@@ -185,40 +162,34 @@
     }
 
     // ── Save: marketer clicks Done ────────────────────────────
-function onSave() {
-    payload.metaData.isConfigured = true;
+    function onSave() {
 
-    // Use known DE key as fallback if auto-detection failed
-    var deKey = entryDeKey || 'B405B07A-6C45-4AD6-8F3F-887A4BE96782';
+        var mobile = $('#mobileNumber').val();
+        var lead   = $('#leadId').val();
+        var app    = $('#applicationId').val();
 
-    var mobile = $('#mobileNumber').val() || '{{Event.' + deKey + '.MobileNumber}}';
-    var lead   = $('#leadId').val()       || '{{Event.' + deKey + '.LeadId}}';
-    var app    = $('#applicationId').val()|| '{{Event.' + deKey + '.ApplicationId}}';
+        // No hardcoded DE: refuse to save unless a real Event token is present
+        if (!mobile || mobile.indexOf('{{Event.') !== 0) {
+            alert('Entry DE not detected. Enter the {{Event.<DE-KEY>.Field}} tokens before saving.');
+            return;   // leaves the activity unconfigured rather than guessing a DE
+        }
 
-    payload.arguments.execute.inArguments = [
-        { "subscriberKey":  "{{Contact.Key}}" },
-        { "mobileNumber":   mobile },
-        { "leadId":         lead },
-        { "applicationId":  app },
-        { "journeyId":      "{{Interaction.InteractionId}}" },
-        { "journeyVersion": "{{Interaction.InteractionVersionId}}" },
-        { "activityId":     "{{Activity.Id}}" },
-        { "source":         $('#source').val() },
-        { "entryDeKey":     deKey }
-    ];
+        payload.metaData.isConfigured = true;
+        payload.arguments.execute.inArguments = [
+            { "subscriberKey":  "{{Contact.Key}}" },
+            { "mobileNumber":   mobile },
+            { "leadId":         lead },
+            { "applicationId":  app }
+        ];
 
-    connection.trigger('updateActivity', payload);
-}
+        connection.trigger('updateActivity', payload);
+    }
 
-    // ── Helper: extract saved args from payload ───────────────
+    // ── Helper: read saved args back out of the payload ───────
     function extractArgs(pl) {
         var args = {};
         try {
-            if (
-                pl.arguments &&
-                pl.arguments.execute &&
-                pl.arguments.execute.inArguments
-            ) {
+            if (pl.arguments && pl.arguments.execute && pl.arguments.execute.inArguments) {
                 pl.arguments.execute.inArguments.forEach(function(obj) {
                     var key = Object.keys(obj)[0];
                     args[key] = obj[key];
