@@ -184,7 +184,8 @@
             { "subscriberKey":  "{{Contact.Key}}" },
             { "mobileNumber":   mobile },
             { "leadId":         lead },
-            { "applicationId":  app }
+            { "applicationId":  app },
+            { "journeyId":      "{{Interaction.InteractionId}}" }
         ];
 
         connection.trigger('updateActivity', payload);
