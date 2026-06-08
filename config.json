@@ -22,7 +22,8 @@
         { "subscriberKey":  "{{Contact.Key}}" },
         { "mobileNumber":   "" },
         { "leadId":         "" },
-        { "applicationId":  "" }
+        { "applicationId":  "" },
+        { "journeyId":      "{{Interaction.InteractionId}}" }
       ],
       "outArguments": []
     }
@@ -49,7 +50,8 @@
           { "subscriberKey":  { "dataType": "Text", "direction": "in" } },
           { "mobileNumber":   { "dataType": "Phone", "direction": "in" } },
           { "leadId":         { "dataType": "Text", "direction": "in" } },
-          { "applicationId":  { "dataType": "Text", "direction": "in" } }
+          { "applicationId":  { "dataType": "Text", "direction": "in" } },
+          { "journeyId":      { "dataType": "Text", "direction": "in" } }
         ],
         "outArguments": []
       }
