@@ -64,7 +64,6 @@
 
 <h3>📱 SMS Logger <span class="badge">Active</span></h3>
 
-<!-- Shows detected Entry DE key to marketer -->
 <div class="de-key-display" id="deKeyDisplay" style="display:none;">
     <span>Entry DE Key:</span> <span id="deKeyValue"></span>
 </div>
@@ -97,7 +96,8 @@
     $(window).ready(function () {
         connection.on('initActivity', onInitActivity);
         connection.on('clickedNext',  onSave);
-        connection.on('requestedTriggerEventDefinition', onTriggerEventReceived);
+        // requestSchema works for DE / Salesforce Data entry sources
+        connection.on('requestedSchema', onSchemaReceived);
         connection.trigger('ready');
     });
 
@@ -110,7 +110,7 @@
 
         if (savedArgs.mobileNumber && savedArgs.mobileNumber !== '') {
 
-            // Returning to a saved activity — restore the persisted tokens
+            // Returning to a saved activity — restore persisted tokens
             $('#mobileNumber').val(savedArgs.mobileNumber);
             $('#leadId').val(savedArgs.leadId || '');
             $('#applicationId').val(savedArgs.applicationId || '');
@@ -119,19 +119,24 @@
 
         } else {
 
-            // Fresh drop — request the entry event schema from JB
-            connection.trigger('requestTriggerEventDefinition');
+            // Fresh drop — ask JB for the entry event schema
+            connection.trigger('requestSchema');
         }
     }
 
-    // ── Step 2: JB responds with the entry event definition ───
-    function onTriggerEventReceived(eventDef) {
+    // ── Step 2: derive the entry DE key from the schema ───────
+    function onSchemaReceived(data) {
         try {
-            if (eventDef && (eventDef.id || eventDef.key)) {
-                entryDeKey = eventDef.key || eventDef.id || '';
-                if (entryDeKey !== '') {
-                    applyTokens(entryDeKey);
-                    return;
+            var schema = (data && data.schema) ? data.schema : [];
+            for (var i = 0; i < schema.length; i++) {
+                var k = schema[i].key || '';
+                if (k.indexOf('Event.') === 0 && k.lastIndexOf('.') > 6) {
+                    // key looks like Event.<entryKey>.<Field> — pull <entryKey>
+                    entryDeKey = k.substring(6, k.lastIndexOf('.'));
+                    if (entryDeKey !== '') {
+                        applyTokens(entryDeKey);
+                        return;
+                    }
                 }
             }
         } catch(e) {}
@@ -171,7 +176,7 @@
         // No hardcoded DE: refuse to save unless a real Event token is present
         if (!mobile || mobile.indexOf('{{Event.') !== 0) {
             alert('Entry DE not detected. Enter the {{Event.<DE-KEY>.Field}} tokens before saving.');
-            return;   // leaves the activity unconfigured rather than guessing a DE
+            return;
         }
 
         payload.metaData.isConfigured = true;
